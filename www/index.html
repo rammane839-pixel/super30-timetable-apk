@@ -759,10 +759,10 @@
             <span>Save to Phone</span>
           </button>
 
-          <!-- Button 2: Share via Android System Drawer / WhatsApp -->
-          <button type="button" onclick="mobileShareImageOrWhatsApp()" class="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1.5 text-xs transition">
-            <i data-lucide="share-2" class="w-4 h-4"></i>
-            <span>Share / Send</span>
+          <!-- Button 2: Direct Share to WhatsApp with Image File -->
+          <button type="button" onclick="shareImageDirectToWhatsApp()" class="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1.5 text-xs transition">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>Share on WhatsApp</span>
           </button>
         </div>
 
@@ -1832,24 +1832,116 @@
       }
     }
 
-    function mobileSaveOrDownload() {
-      if (!lastExportDataUrl) {
+    /* -------------------------------------------------------------
+       PERMISSION SYSTEM & MOBILE DOWNLOAD ENGINE
+       ------------------------------------------------------------- */
+    let storagePermissionGranted = false;
+
+    async function requestPermissionAndDownload() {
+      if (!lastExportDataUrl && !lastExportBlob) {
         downloadTimetablePNG();
         return;
       }
 
-      try {
-        const link = document.createElement('a');
-        link.download = lastExportFilename;
-        link.href = lastExportBlob ? URL.createObjectURL(lastExportBlob) : lastExportDataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('Saving image to downloads...', 'success');
-      } catch (e) {
-        console.warn('Standard link download was blocked, trying Web Share', e);
-        mobileShareImageOrWhatsApp();
+      // Check if Capacitor native bridge is present
+      const cap = window.Capacitor;
+      if (cap && cap.Plugins && cap.Plugins.Filesystem) {
+        try {
+          if (typeof cap.Plugins.Filesystem.checkPermissions === 'function') {
+            const status = await cap.Plugins.Filesystem.checkPermissions();
+            if (status.publicStorage !== 'granted') {
+              const req = await cap.Plugins.Filesystem.requestPermissions();
+              if (req.publicStorage !== 'granted') {
+                showToast('Storage permission denied by user', 'error');
+                return;
+              }
+            }
+          }
+          await executeCapacitorFileSave(cap.Plugins.Filesystem);
+          return;
+        } catch (err) {
+          console.warn('Capacitor Filesystem check/save failed, proceeding with fallback:', err);
+        }
       }
+
+      // If user hasn't seen the in-app permission prompt once, show the clear dialog
+      if (!storagePermissionGranted) {
+        openModal('modalPermissionPrompt');
+      } else {
+        proceedFileSave();
+      }
+    }
+
+    function confirmPermissionAndProceed() {
+      storagePermissionGranted = true;
+      closeModal('modalPermissionPrompt');
+      proceedFileSave();
+    }
+
+    async function executeCapacitorFileSave(Filesystem) {
+      showToast('Saving to device storage...', 'info');
+      try {
+        const base64Data = lastExportDataUrl.replace(/^data:image\/png;base64,/, '');
+        const res = await Filesystem.writeFile({
+          path: lastExportFilename,
+          data: base64Data,
+          directory: 'DOCUMENTS',
+          recursive: true
+        });
+        showToast(`Saved to Documents: ${lastExportFilename}!`, 'success');
+      } catch (e) {
+        console.error('Capacitor write error', e);
+        proceedFileSave();
+      }
+    }
+
+    function proceedFileSave() {
+      showToast('Preparing download...', 'info');
+
+      // Attempt 1: Standard anchor download with blob object URL
+      try {
+        if (lastExportBlob) {
+          const blobUrl = URL.createObjectURL(lastExportBlob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = lastExportFilename;
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+          }, 300);
+          showToast('Download started!', 'success');
+          return;
+        }
+      } catch (e) {
+        console.warn('Direct blob anchor failed, falling back to base64', e);
+      }
+
+      // Attempt 2: Base64 direct download
+      try {
+        if (lastExportDataUrl) {
+          const link = document.createElement('a');
+          link.href = lastExportDataUrl;
+          link.download = lastExportFilename;
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+          }, 300);
+          showToast('Image downloaded!', 'success');
+          return;
+        }
+      } catch (err) {
+        console.warn('Base64 anchor download failed', err);
+      }
+
+      // Attempt 3: Share / Save to Gallery fallback
+      mobileShareImageOrWhatsApp();
+    }
+
+    function mobileSaveOrDownload() {
+      requestPermissionAndDownload();
     }
 
     function mobileShareImageOrWhatsApp() {
@@ -1870,8 +1962,41 @@
       }
     }
 
+    // Direct WhatsApp share function with Image file attachment via Web Share API
+    function shareImageDirectToWhatsApp() {
+      if (!lastExportBlob) {
+        downloadTimetablePNG();
+        return;
+      }
+
+      const file = new File([lastExportBlob], lastExportFilename, { type: 'image/png' });
+      const cls = db.classes.find(c => c.id === activeClassId);
+      const name = currentViewMode === 'class' ? (cls ? cls.name : 'Class') : (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty');
+      const shareTitle = `SUPER 30 ACADEMY - ${name} Timetable`;
+      const shareText = `🎓 *SUPER 30 ACADEMY, KARAD*\n🗓️ *Date:* ${getPrettyDate(activeDate)}\n📌 *Schedule:* ${name}\n🌟 *Created by Ram Sir*`;
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({
+          files: [file],
+          title: shareTitle,
+          text: shareText
+        }).then(() => {
+          showToast('Opening share options / WhatsApp...', 'success');
+        }).catch(err => {
+          if (err.name !== 'AbortError') {
+            console.warn('Native file share failed, redirecting to WhatsApp chat', err);
+            shareViaWhatsApp();
+          }
+        });
+      } else {
+        // Fallback: Opens WhatsApp with preformatted text schedule
+        showToast('Direct file sharing not supported on this browser. Opening WhatsApp text...', 'info');
+        shareViaWhatsApp();
+      }
+    }
+
     function notifyLongPressHint() {
-      showToast('Touch and hold (long-press) this image to save directly to Photos', 'info');
+      showToast('Touch and hold (long-press) the picture above to choose "Save Image"', 'info');
     }
 
     function shareViaWhatsApp() {
