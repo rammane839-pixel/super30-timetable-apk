@@ -53,7 +53,7 @@
       --brand-700: #1e40af;
       --brand-800: #1e3a8a;
       --brand-900: #172554;
-      --bg-body: #f8fafc;
+      --bg-body: #e2e8f0;
     }
 
     body {
@@ -61,6 +61,17 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       transition: background-color 0.3s ease;
       -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    /* Strictly constrain app shell to mobile portrait width */
+    .mobile-shell {
+      width: 100%;
+      max-width: 430px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 100dvh;
+      box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.25);
     }
 
     /* Mobile-optimized select styles */
@@ -129,7 +140,7 @@
       background: radial-gradient(ellipse at bottom left, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.03) 60%, #f0fdf4 100%);
     }
     body[data-theme="cosmic"] {
-      --bg-body: #0a0f1d;
+      --bg-body: #050811;
       background: radial-gradient(circle at 80% 20%, rgba(112, 26, 117, 0.25) 0%, rgba(49, 46, 129, 0.3) 45%, #070b14 100%);
       color: #e2e8f0;
     }
@@ -192,55 +203,55 @@
   <!-- ============================================================== -->
   <!-- 2. NAVBAR -->
   <!-- ============================================================== -->
+  <div class="mobile-shell bg-slate-50/95 flex flex-col relative">
   <header class="sticky top-0 z-40 bg-white/95 border-b border-slate-200 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-2.5 sm:px-6">
-      <div class="flex items-center justify-between h-14 sm:h-20">
+    <div class="w-full px-3">
+      <div class="flex items-center justify-between h-14">
 
         <!-- Academy Branding -->
-        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md flex-shrink-0">
-            <i data-lucide="graduation-cap" class="w-4 h-4 sm:w-6 sm:h-6 text-amber-300"></i>
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md flex-shrink-0">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-300"></i>
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="text-xs sm:text-lg font-black tracking-tight text-slate-900 font-display truncate">
+              <span class="text-xs font-black tracking-tight text-slate-900 font-display truncate">
                 SUPER 30 ACADEMY
               </span>
-              <span class="px-1.5 py-0.2 sm:px-2 sm:py-0.5 text-[9px] sm:text-[10px] font-black bg-amber-100 text-amber-900 rounded border border-amber-300/60 uppercase flex-shrink-0">
+              <span class="px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-900 rounded border border-amber-300/60 uppercase flex-shrink-0">
                 Karad
               </span>
             </div>
-            <p class="text-[10px] sm:text-xs text-blue-600 font-bold flex items-center gap-1 truncate">
-              <span>Ram Sir</span>
+            <p class="text-[10px] text-blue-600 font-bold flex items-center gap-1 truncate">
+              <span>Created by Ram Sir</span>
               <span class="text-slate-300">&bull;</span>
-              <span class="text-[10px] sm:text-[11px] text-slate-500 font-normal" id="headerLiveClock">--:--</span>
+              <span class="text-[10px] text-slate-500 font-normal" id="headerLiveClock">--:--</span>
             </p>
           </div>
         </div>
 
         <!-- Right Action Items -->
-        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-          <button onclick="switchTab('view-export')" class="px-2.5 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1 shadow-sm">
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <button onclick="switchTab('view-export')" class="px-2.5 py-1.5 text-[11px] font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1 shadow-sm">
             <i data-lucide="image" class="w-3.5 h-3.5"></i>
-            <span class="hidden xs:inline sm:inline">Export PNG</span>
+            <span>PNG</span>
           </button>
 
-          <button onclick="shareViaWhatsApp()" class="p-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 shadow-sm">
+          <button onclick="shareViaWhatsApp()" class="p-1.5 text-[11px] font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 shadow-sm" title="Share via WhatsApp">
             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">WhatsApp</span>
           </button>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="flex space-x-1 sm:space-x-2 overflow-x-auto pb-1.5 border-t border-slate-100 no-scrollbar">
-        <button onclick="switchTab('edit-timetable')" id="tab-edit-timetable" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold flex items-center gap-1.5 whitespace-nowrap bg-blue-50 text-blue-700 flex-shrink-0">
+      <nav class="flex space-x-1 overflow-x-auto pb-1.5 border-t border-slate-100">
+        <button onclick="switchTab('edit-timetable')" id="tab-edit-timetable" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 whitespace-nowrap bg-blue-50 text-blue-700 flex-shrink-0">
           <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Timetable
         </button>
-        <button onclick="switchTab('view-export')" id="tab-view-export" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
+        <button onclick="switchTab('view-export')" id="tab-view-export" class="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
           <i data-lucide="eye" class="w-3.5 h-3.5"></i> View & Export PNG
         </button>
-        <button onclick="switchTab('settings')" id="tab-settings" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
+        <button onclick="switchTab('settings')" id="tab-settings" class="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
           <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Faculty & Batches
         </button>
       </nav>
@@ -250,7 +261,7 @@
   <!-- ============================================================== -->
   <!-- 3. MAIN CONTENT CONTAINER -->
   <!-- ============================================================== -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-6 space-y-5">
+  <main class="flex-1 w-full p-2.5 space-y-3.5">
 
     <!-- ============================================================== -->
     <!-- TAB 1: EDIT TIMETABLE (DEDICATED EDITOR ONLY) -->
@@ -461,10 +472,9 @@
             <table id="viewTimetable" class="w-full text-left border-collapse table-modern">
               <thead>
                 <tr class="rounded-xl text-[11px] uppercase tracking-wider font-extrabold">
-                  <th class="py-2.5 px-3 rounded-l-xl w-48">Time Slot</th>
-                  <th class="py-2.5 px-3 w-28">Type</th>
-                  <th class="py-2.5 px-3" id="viewTableCol3">Teacher</th>
-                  <th class="py-2.5 px-3 rounded-r-xl" id="viewTableCol4">Subject</th>
+                  <th class="py-2.5 px-3 rounded-l-xl w-44 sm:w-48">Time Slot</th>
+                  <th class="py-2.5 px-3" id="viewTableCol2">Teacher</th>
+                  <th class="py-2.5 px-3 rounded-r-xl" id="viewTableCol3">Subject</th>
                 </tr>
               </thead>
               <tbody id="viewTableBody" class="divide-y divide-slate-100 text-xs font-medium">
@@ -720,12 +730,15 @@
       </div>
 
       <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <span class="text-slate-500">Touch/Hold image to save or click Download:</span>
-        <div class="flex items-center gap-2">
-          <button onclick="closeModal('modalExportPreview')" class="px-4 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Close</button>
-          <a id="exportDownloadAnchor" download="Super30_Timetable.png" href="" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md flex items-center gap-1.5">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Image
+        <span class="text-slate-500 text-[11px]">Long-press image to save or tap Share/Download:</span>
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="shareExportedImageNative()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md flex items-center gap-1">
+            <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share / Save
+          </button>
+          <a id="exportDownloadAnchor" download="Super30_Timetable.png" href="" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md flex items-center gap-1">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download
           </a>
+          <button type="button" onclick="closeModal('modalExportPreview')" class="px-3 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Close</button>
         </div>
       </div>
     </div>
@@ -733,9 +746,6 @@
 
   <!-- TOAST CONTAINER -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
-
-  <!-- Hidden Sandbox for Full Uncropped Image Export -->
-  <div id="exportOffscreenHost" style="position:fixed; left:-9999px; top:-9999px; width:920px; z-index:-100; pointer-events:none; opacity:0;"></div>
 
   <!-- ============================================================== -->
   <!-- JAVASCRIPT APPLICATION CORE -->
@@ -1065,7 +1075,7 @@
                 </span>
               </td>
               <td colspan="2" class="py-2.5 px-3 font-bold italic text-slate-700 text-xs">
-                ${slot.label || 'Tea / Recess Interval'}
+                ${slot.label || 'Recess'}
               </td>
               <td class="py-2.5 px-3 text-right no-print">
                 <div class="inline-flex items-center gap-1">
@@ -1221,8 +1231,8 @@
     function renderExportView() {
       const badge = document.getElementById('viewDisplayBadge');
       const subtext = document.getElementById('viewDisplaySubtext');
+      const thCol2 = document.getElementById('viewTableCol2');
       const thCol3 = document.getElementById('viewTableCol3');
-      const thCol4 = document.getElementById('viewTableCol4');
       const tbody = document.getElementById('viewTableBody');
 
       if (subtext) subtext.innerText = `Date: ${getPrettyDate(activeDate)}`;
@@ -1231,8 +1241,8 @@
         const cls = db.classes.find(c => c.id === activeClassId);
         const className = cls ? cls.name : 'Selected Batch';
         if (badge) badge.innerText = `Batch: ${className}`;
-        if (thCol3) thCol3.innerText = 'Teacher';
-        if (thCol4) thCol4.innerText = 'Subject / Details';
+        if (thCol2) thCol2.innerText = 'Teacher';
+        if (thCol3) thCol3.innerText = 'Subject';
 
         const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
         const slots = dailyData.slots || [];
@@ -1244,20 +1254,24 @@
 
           if (slot.type === 'recess') {
             return `
-              <tr class="bg-amber-50/80 font-bold text-amber-900">
-                <td class="py-2.5 px-3 whitespace-nowrap"><i data-lucide="coffee" class="w-3.5 h-3.5 inline text-amber-600"></i> ${timeStr}</td>
-                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] uppercase bg-amber-200 text-amber-900">RECESS</span></td>
-                <td colspan="2" class="py-2.5 px-3 italic text-slate-700">${slot.label || 'Tea Break'}</td>
+              <tr class="bg-amber-50/80 font-bold text-amber-900 border-y border-amber-200">
+                <td class="py-2.5 px-3 whitespace-nowrap"><i data-lucide="coffee" class="w-3.5 h-3.5 inline text-amber-600 mr-1"></i>${timeStr}</td>
+                <td colspan="2" class="py-2.5 px-3 italic text-amber-900">
+                  <span class="px-2 py-0.5 rounded-full text-[9px] uppercase bg-amber-200 text-amber-900 font-black mr-1.5">RECESS</span>
+                  ${slot.label || 'Recess'}
+                </td>
               </tr>
             `;
           }
 
           if (slot.type === 'study') {
             return `
-              <tr class="bg-purple-50/80 text-purple-950 font-bold">
-                <td class="py-2.5 px-3 whitespace-nowrap"><i data-lucide="book-open" class="w-3.5 h-3.5 inline text-purple-600"></i> ${timeStr}</td>
-                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] uppercase bg-purple-200 text-purple-900">STUDY</span></td>
-                <td colspan="2" class="py-2.5 px-3 text-purple-900">${slot.label || 'Self-Study & Problem Solving'}</td>
+              <tr class="bg-purple-50/80 text-purple-950 font-bold border-y border-purple-200">
+                <td class="py-2.5 px-3 whitespace-nowrap"><i data-lucide="book-open" class="w-3.5 h-3.5 inline text-purple-600 mr-1"></i>${timeStr}</td>
+                <td colspan="2" class="py-2.5 px-3 text-purple-900">
+                  <span class="px-2 py-0.5 rounded-full text-[9px] uppercase bg-purple-200 text-purple-900 font-black mr-1.5">STUDY SESSION</span>
+                  ${slot.label || 'Self-Study & Problem Solving Session'}
+                </td>
               </tr>
             `;
           }
@@ -1267,11 +1281,10 @@
           const sub = assign.subject || '<span class="text-slate-400 italic font-normal">TBA</span>';
 
           return `
-            <tr class="hover:bg-slate-50">
+            <tr class="hover:bg-slate-50 transition">
               <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">${timeStr}</td>
-              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-100 text-blue-800">LECTURE</span></td>
               <td class="py-2.5 px-3 font-bold text-slate-800">${t}</td>
-              <td class="py-2.5 px-3 font-semibold text-slate-700">${sub}</td>
+              <td class="py-2.5 px-3 font-semibold text-blue-700">${sub}</td>
             </tr>
           `;
         }).join('');
@@ -1281,8 +1294,8 @@
         const teacher = db.teachers.find(t => t.id === activeTeacherId);
         const teacherName = teacher ? teacher.name : 'Selected Faculty';
         if (badge) badge.innerText = `Faculty: ${teacherName}`;
-        if (thCol3) thCol3.innerText = 'Assigned Batch';
-        if (thCol4) thCol4.innerText = 'Subject';
+        if (thCol2) thCol2.innerText = 'Batch / Class';
+        if (thCol3) thCol3.innerText = 'Subject';
 
         const teacherSlots = [];
         const daySchedule = db.dateSchedules[activeDate] || {};
@@ -1308,14 +1321,13 @@
         teacherSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
 
         if (teacherSlots.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 italic">No lectures assigned to ${teacherName} on ${getPrettyDate(activeDate)}</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-slate-400 italic">No lectures assigned to ${teacherName} on ${getPrettyDate(activeDate)}</td></tr>`;
           return;
         }
 
         tbody.innerHTML = teacherSlots.map(item => `
-          <tr class="hover:bg-slate-50">
+          <tr class="hover:bg-slate-50 transition">
             <td class="py-2.5 px-3 font-bold text-slate-900 whitespace-nowrap">${formatSlotRange(item.slot.start, item.slot.end)}</td>
-            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-100 text-blue-800">LECTURE</span></td>
             <td class="py-2.5 px-3 font-bold text-blue-700">${item.batchName}</td>
             <td class="py-2.5 px-3 font-semibold text-slate-800">${item.subject}</td>
           </tr>
@@ -1463,7 +1475,7 @@
         start,
         end,
         type,
-        label: label || (type === 'recess' ? 'Recess Break' : (type === 'study' ? 'Self-Study Session' : ''))
+        label: label || (type === 'recess' ? 'Recess' : (type === 'study' ? 'Self-Study Session' : ''))
       };
 
       if (!dailyData.slots) dailyData.slots = [];
@@ -1579,7 +1591,7 @@
       sorted.forEach(s => {
         const time = formatSlotRange(s.start, s.end);
         if (s.type === 'recess') {
-          msg += `☕ *${time}* ➔ *RECESS:* ${s.label || 'Break'}\n\n`;
+          msg += `☕ *${time}* ➔ *RECESS*\n\n`;
         } else if (s.type === 'study') {
           msg += `📖 *${time}* ➔ *STUDY:* ${s.label || 'Self-Study Session'}\n\n`;
         } else {
@@ -1755,7 +1767,7 @@
         defaultSlots: [
           { id: 's_1', start: '08:00', end: '09:00', type: 'lecture' },
           { id: 's_2', start: '09:00', end: '10:00', type: 'lecture' },
-          { id: 's_3', start: '10:00', end: '10:30', type: 'recess', label: 'Tea Break' }
+          { id: 's_3', start: '10:00', end: '10:30', type: 'recess', label: 'Recess' }
         ]
       });
       saveDatabase();
@@ -1829,136 +1841,363 @@
     }
 
     /* -------------------------------------------------------------
-       PNG EXPORT (RELIABLE HIGH-DEFINITION BLOB + WEB SHARE API)
+       PNG EXPORT (SELF-CONTAINED HIGH-DPI CANVAS POSTER RENDERER)
        ------------------------------------------------------------- */
     let lastExportBlob = null;
     let lastExportFilename = 'Super30_Timetable.png';
 
-    function downloadTimetablePNG() {
-      // If user is currently on Edit Timetable tab, render the export view first to ensure content is ready
-      if (currentTab !== 'view-export') {
-        renderExportView();
-      }
+    function getPaletteBannerColors(styleName) {
+      const palettes = {
+        'modern': { top: '#1d4ed8', bottom: '#0f172a', accent: '#facc15' },
+        'aurora': { top: '#097969', bottom: '#4f46e5', accent: '#fde047' },
+        'sunset': { top: '#e11d48', bottom: '#ea580c', accent: '#fef08a' },
+        'cyberpunk': { top: '#a21caf', bottom: '#0284c7', accent: '#67e8f9' },
+        'emerald-glow': { top: '#064e3b', bottom: '#059669', accent: '#fde68a' },
+        'cosmic': { top: '#312e81', bottom: '#701a75', accent: '#facc15' },
+        'gold': { top: '#0f172a', bottom: '#1e293b', accent: '#facc15' },
+        'clean': { top: '#1e293b', bottom: '#334155', accent: '#93c5fd' }
+      };
+      return palettes[styleName] || palettes.modern;
+    }
 
-      showToast('Capturing complete timetable image...', 'info');
-      const sourceEl = document.getElementById('renderableContainer');
-      if (!sourceEl) {
-        showToast('Timetable container not found', 'error');
-        return;
-      }
+    function buildPosterRowsData() {
+      const rows = [];
+      if (currentViewMode === 'class') {
+        const cls = db.classes.find(c => c.id === activeClassId);
+        const titleBadge = `BATCH: ${(cls ? cls.name : 'SELECTED BATCH').toUpperCase()}`;
+        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+        const sortedSlots = [...(dailyData.slots || [])].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+        const assigns = dailyData.assignments || {};
 
-      // Clone into the dedicated 920px wide offscreen host to guarantee 100% full uncropped capture on mobile
-      const host = document.getElementById('exportOffscreenHost');
-      host.innerHTML = '';
-      
-      const clone = sourceEl.cloneNode(true);
-      clone.style.width = '900px';
-      clone.style.maxWidth = '900px';
-      clone.style.margin = '0';
-      clone.style.padding = '24px';
-      clone.style.backgroundColor = '#ffffff';
-      clone.style.boxSizing = 'border-box';
-      
-      // Make sure all text is fully visible and no horizontal overflow is clipped
-      const scrollableDivs = clone.querySelectorAll('.overflow-x-auto');
-      scrollableDivs.forEach(div => {
-        div.style.overflow = 'visible';
-        div.style.width = '100%';
-      });
+        sortedSlots.forEach(slot => {
+          const timeRange = formatSlotRange(slot.start, slot.end);
+          if (slot.type === 'recess') {
+            rows.push({
+              kind: 'recess',
+              time: timeRange,
+              col1: 'RECESS',
+              col2: slot.label || 'Recess',
+              col3: ''
+            });
+          } else if (slot.type === 'study') {
+            rows.push({
+              kind: 'study',
+              time: timeRange,
+              col1: 'STUDY SESSION',
+              col2: 'Self-Study (No Teacher)',
+              col3: slot.label || 'Self-Study & DPP Practice'
+            });
+          } else {
+            const assign = assigns[slot.id] || {};
+            const teacherName = db.teachers.find(t => t.id === assign.teacherId)?.name || 'TBA';
+            const subjectName = assign.subject || 'TBA';
+            rows.push({
+              kind: 'lecture',
+              time: timeRange,
+              col1: 'LECTURE',
+              col2: teacherName,
+              col3: subjectName
+            });
+          }
+        });
 
-      const tables = clone.querySelectorAll('table');
-      tables.forEach(tbl => {
-        tbl.style.width = '100%';
-        tbl.style.tableLayout = 'auto';
-      });
+        return {
+          titleBadge,
+          headers: ['TIME SLOT', 'TEACHER', 'SUBJECT'],
+          rows
+        };
+      } else {
+        const teacher = db.teachers.find(t => t.id === activeTeacherId);
+        const titleBadge = `FACULTY: ${(teacher ? teacher.name : 'SELECTED FACULTY').toUpperCase()}`;
+        const daySchedule = db.dateSchedules[activeDate] || {};
+        const collected = [];
 
-      host.appendChild(clone);
-
-      // Re-run safe icon replacement on the cloned icons if needed
-      if (typeof window.lucide !== 'undefined' && typeof window.lucide.createIcons === 'function') {
-        try { window.lucide.createIcons(); } catch(e) {}
-      }
-
-      // Allow DOM to settle for 60ms before canvas capture
-      setTimeout(() => {
-        html2canvas(clone, {
-          scale: 2, // High DPI clarity
-          backgroundColor: '#ffffff',
-          useCORS: true,
-          logging: false,
-          width: 900,
-          windowWidth: 920,
-          scrollX: 0,
-          scrollY: 0
-        }).then(canvas => {
-          host.innerHTML = ''; // Clean up offscreen host
-
-          canvas.toBlob(blob => {
-            if (!blob) {
-              showToast('Image processing failed', 'error');
-              return;
+        db.classes.forEach(cls => {
+          const clsDay = daySchedule[cls.id];
+          if (!clsDay) return;
+          const slots = clsDay.slots || [];
+          const assigns = clsDay.assignments || {};
+          slots.forEach(slot => {
+            const assign = assigns[slot.id];
+            if (assign && assign.teacherId === activeTeacherId) {
+              collected.push({
+                kind: 'lecture',
+                time: formatSlotRange(slot.start, slot.end),
+                col1: 'LECTURE',
+                col2: cls.name,
+                col3: assign.subject || 'General Session',
+                _startMin: timeToMinutes(slot.start)
+              });
             }
+          });
+        });
 
+        collected.sort((a, b) => a._startMin - b._startMin);
+        collected.forEach(r => delete r._startMin);
+
+        return {
+          titleBadge,
+          headers: ['TIME SLOT', 'BATCH / CLASS', 'SUBJECT'],
+          rows: collected
+        };
+      }
+    }
+
+    function renderHighResTimetableCanvas() {
+      const posterData = buildPosterRowsData();
+      const palette = getPaletteBannerColors(db.tableStyle || 'modern');
+      const dpr = 2;
+
+      const width = 900;
+      const padX = 36;
+      const headerHeight = 146;
+      const tableHeaderHeight = 46;
+      const rowHeight = 58;
+      const footerHeight = 62;
+      const rowCount = Math.max(posterData.rows.length, 1);
+      const totalHeight = headerHeight + tableHeaderHeight + (rowCount * rowHeight) + footerHeight + 24;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width * dpr;
+      canvas.height = totalHeight * dpr;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      // Outer white card background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, totalHeight);
+
+      // Top gradient header banner
+      const bannerGrad = ctx.createLinearGradient(0, 0, width, headerHeight);
+      bannerGrad.addColorStop(0, palette.top);
+      bannerGrad.addColorStop(1, palette.bottom);
+      ctx.fillStyle = bannerGrad;
+      ctx.fillRect(0, 0, width, headerHeight);
+
+      // Academy Emblem Badge (S30)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.beginPath();
+      ctx.roundRect(padX, 30, 66, 66, 16);
+      ctx.fill();
+
+      ctx.fillStyle = palette.accent;
+      ctx.font = '900 24px Outfit, "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('S30', padX + 33, 63);
+
+      // Academy Name & Subtitle
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 28px Outfit, "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('SUPER 30 ACADEMY, KARAD', padX + 84, 48);
+
+      ctx.fillStyle = palette.accent;
+      ctx.font = '800 13px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('JEE  •  NEET  •  MHT-CET   |   CREATED BY RAM SIR', padX + 84, 76);
+
+      // Right side Batch/Teacher & Date pill info
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(posterData.titleBadge, width - padX, 48);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(`Date: ${getPrettyDate(activeDate)}`, width - padX, 74);
+
+      // Table Column Header Row
+      const tableTop = headerHeight + 12;
+      const tableLeft = padX;
+      const tableWidth = width - (padX * 2);
+      const col1Width = 250; // Time Slot
+      const col2Width = 280; // Teacher or Batch
+      const col3Width = tableWidth - col1Width - col2Width; // Subject
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.roundRect(tableLeft, tableTop, tableWidth, tableHeaderHeight, 10);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 12px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(posterData.headers[0], tableLeft + 18, tableTop + tableHeaderHeight / 2);
+      ctx.fillText(posterData.headers[1], tableLeft + col1Width + 14, tableTop + tableHeaderHeight / 2);
+      ctx.fillText(posterData.headers[2], tableLeft + col1Width + col2Width + 14, tableTop + tableHeaderHeight / 2);
+
+      // Rows rendering (zero cropping, full text)
+      let currentY = tableTop + tableHeaderHeight;
+
+      if (posterData.rows.length === 0) {
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(tableLeft, currentY, tableWidth, rowHeight);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '600 14px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No schedule entries available for this selection.', width / 2, currentY + rowHeight / 2);
+        currentY += rowHeight;
+      } else {
+        posterData.rows.forEach((row, idx) => {
+          if (row.kind === 'recess') {
+            ctx.fillStyle = '#fef3c7';
+          } else if (row.kind === 'study') {
+            ctx.fillStyle = '#f3e8ff';
+          } else {
+            ctx.fillStyle = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+          }
+          ctx.fillRect(tableLeft, currentY, tableWidth, rowHeight);
+
+          // Row bottom divider
+          ctx.strokeStyle = row.kind === 'study' ? '#d8b4fe' : (row.kind === 'recess' ? '#fcd34d' : '#e2e8f0');
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(tableLeft, currentY + rowHeight);
+          ctx.lineTo(tableLeft + tableWidth, currentY + rowHeight);
+          ctx.stroke();
+
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          const midY = currentY + rowHeight / 2;
+
+          // Time Slot column
+          ctx.fillStyle = row.kind === 'study' ? '#4c1d95' : (row.kind === 'recess' ? '#78350f' : '#0f172a');
+          ctx.font = '800 13px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText(row.time, tableLeft + 18, midY);
+
+          if (row.kind === 'recess') {
+            ctx.fillStyle = '#92400e';
+            ctx.font = '800 13px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`☕ RECESS`, tableLeft + col1Width + 14, midY);
+          } else if (row.kind === 'study') {
+            ctx.fillStyle = '#6b21a8';
+            ctx.font = '800 12px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('📖 STUDY SESSION', tableLeft + col1Width + 14, midY);
+
+            ctx.fillStyle = '#3b0764';
+            ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(row.col3, tableLeft + col1Width + col2Width + 14, midY);
+          } else {
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '700 14px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(row.col2, tableLeft + col1Width + 14, midY);
+
+            ctx.fillStyle = '#1d4ed8';
+            ctx.font = '800 14px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(row.col3, tableLeft + col1Width + col2Width + 14, midY);
+          }
+
+          currentY += rowHeight;
+        });
+      }
+
+      // Footer bar
+      const footerY = currentY + 14;
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padX, footerY);
+      ctx.lineTo(width - padX, footerY);
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '600 12px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('SUPER 30 ACADEMY, KARAD • Smart Offline Timetable Suite', padX, footerY + 22);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = '800 12px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('Created by Ram Sir', width - padX, footerY + 22);
+
+      return canvas;
+    }
+
+    function downloadTimetablePNG() {
+      try {
+        showToast('Generating full uncropped timetable image...', 'info');
+        const canvas = renderHighResTimetableCanvas();
+        const dataUrl = canvas.toDataURL('image/png');
+
+        const cls = db.classes.find(c => c.id === activeClassId);
+        const teacher = db.teachers.find(t => t.id === activeTeacherId);
+        const namePart = currentViewMode === 'class'
+          ? (cls ? cls.name : 'Batch')
+          : (teacher ? teacher.name : 'Faculty');
+        lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
+
+        canvas.toBlob(blob => {
+          if (blob) {
             lastExportBlob = blob;
-            const objectUrl = URL.createObjectURL(blob);
-            const cls = db.classes.find(c => c.id === activeClassId);
-            const namePart = currentViewMode === 'class' ? (cls ? cls.name : 'Batch') : 'FacultySchedule';
-            lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
-
-            // Prepare preview modal image & download anchor
+            const blobUrl = URL.createObjectURL(blob);
             const previewImg = document.getElementById('exportPreviewImg');
             const modalAnchor = document.getElementById('exportDownloadAnchor');
-            if (previewImg) previewImg.src = objectUrl;
+            if (previewImg) previewImg.src = blobUrl;
             if (modalAnchor) {
-              modalAnchor.href = objectUrl;
+              modalAnchor.href = blobUrl;
               modalAnchor.download = lastExportFilename;
             }
-
-            // Attempt direct download
             try {
               const tempLink = document.createElement('a');
-              tempLink.href = objectUrl;
+              tempLink.href = blobUrl;
               tempLink.download = lastExportFilename;
               document.body.appendChild(tempLink);
               tempLink.click();
               document.body.removeChild(tempLink);
-            } catch (err) {
-              console.warn('Direct file download fallback initiated', err);
+            } catch (e) {
+              console.warn('Blob anchor click skipped in WebView:', e);
             }
+          } else {
+            const previewImg = document.getElementById('exportPreviewImg');
+            const modalAnchor = document.getElementById('exportDownloadAnchor');
+            if (previewImg) previewImg.src = dataUrl;
+            if (modalAnchor) {
+              modalAnchor.href = dataUrl;
+              modalAnchor.download = lastExportFilename;
+            }
+          }
 
-            // Always open preview modal so Android users can long-press to save or use Share
-            openModal('modalExportPreview');
-            showToast('Full timetable image ready!', 'success');
-          }, 'image/png', 1.0);
-        }).catch(err => {
-          host.innerHTML = '';
-          console.error('Export failed', err);
-          showToast('Failed to generate full PNG image', 'error');
-        });
-      }, 70);
+          openModal('modalExportPreview');
+          showToast('Full timetable image ready!', 'success');
+        }, 'image/png', 1.0);
+      } catch (err) {
+        console.error('Canvas PNG generation error:', err);
+        showToast('Unable to generate image. Please try again.', 'error');
+      }
     }
 
-    // Native Web Share API integration (perfect for Android APK & Mobile Browsers)
+    // Native Web Share API integration (works cleanly in Android Capacitor WebView & modern mobile browsers)
     function shareExportedImageNative() {
-      if (lastExportBlob && navigator.share && navigator.canShare) {
-        const file = new File([lastExportBlob], lastExportFilename, { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          navigator.share({
-            title: 'SUPER 30 ACADEMY Timetable',
-            text: `SUPER 30 ACADEMY Karad - Schedule for ${getPrettyDate(activeDate)}`,
-            files: [file]
-          }).catch(e => console.log('Share dismissed', e));
-          return;
+      try {
+        if (lastExportBlob && typeof File !== 'undefined' && navigator.share && navigator.canShare) {
+          const file = new File([lastExportBlob], lastExportFilename, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            navigator.share({
+              title: 'SUPER 30 ACADEMY Timetable',
+              text: `SUPER 30 ACADEMY, KARAD - Schedule (${getPrettyDate(activeDate)})`,
+              files: [file]
+            }).catch(err => console.warn('Native share cancelled or unavailable:', err));
+            return;
+          }
         }
+        const modalAnchor = document.getElementById('exportDownloadAnchor');
+        if (modalAnchor && modalAnchor.href) {
+          modalAnchor.click();
+        } else {
+          showToast('Long-press the image above to save it to your device.', 'info');
+        }
+      } catch (err) {
+        console.warn('Share fallback:', err);
+        showToast('Long-press the image above to save it.', 'info');
       }
+    }
 
-      // Fallback: trigger anchor download
-      const modalAnchor = document.getElementById('exportDownloadAnchor');
-      if (modalAnchor && modalAnchor.href) {
-        modalAnchor.click();
-      } else {
-        showToast('Please long-press the image above and tap "Download image"', 'info');
-      }
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('hidden');
+      safeCreateIcons();
     }
 
     function closeModal(id) {
