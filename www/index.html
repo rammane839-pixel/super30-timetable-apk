@@ -718,12 +718,12 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-4 border border-slate-200 shadow-2xl relative flex flex-col max-h-[95vh]">
       <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
             <i data-lucide="image" class="w-4 h-4"></i>
           </div>
           <div>
             <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Timetable Poster Ready</h3>
-            <p class="text-[10px] text-slate-500 font-medium">Save to Phone Gallery or Share</p>
+            <p class="text-[10px] text-slate-500 font-medium" id="exportPreviewSubtext">Formatted for Smartphone Displays</p>
           </div>
         </div>
         <button onclick="closeModal('modalExportPreview')" class="text-slate-400 hover:text-slate-600 p-1 rounded-xl">
@@ -731,10 +731,17 @@
         </button>
       </div>
 
-      <!-- Prominent Android Instruction Ribbon -->
-      <div class="mt-2.5 p-2 rounded-2xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-950 flex items-center gap-2">
-        <i data-lucide="sparkles" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
-        <span class="leading-tight"><strong>For Mobile:</strong> Tap <strong>Save to Phone</strong> below. If your phone restricts direct save, <strong>touch & hold (long-press)</strong> the image to select <em>"Download image"</em>.</span>
+      <!-- Enhanced Mobile Instructions Ribbon -->
+      <div class="mt-2.5 p-2.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 text-[11px] text-blue-950 space-y-1">
+        <div class="flex items-center gap-1.5 font-bold text-blue-800">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+          <span>Save to Your Phone:</span>
+        </div>
+        <ul class="text-[10px] text-slate-600 space-y-0.5 list-disc list-inside">
+          <li><strong>Option 1:</strong> Tap <strong>Save to Phone</strong> below to download directly.</li>
+          <li><strong>Option 2:</strong> Tap <strong>Share / Send</strong> to open WhatsApp or Gallery.</li>
+          <li><strong>Option 3:</strong> <strong>Touch & hold (long-press)</strong> the picture to choose <em>"Download image"</em>.</li>
+        </ul>
       </div>
 
       <!-- Responsive Image Container -->
@@ -1555,43 +1562,316 @@
     /* -------------------------------------------------------------
        PNG EXPORT (RELIABLE HIGH-DEFINITION RENDERER & PREVIEW)
        ------------------------------------------------------------- */
-    function downloadTimetablePNG() {
-      showToast('Rendering high-resolution timetable image...', 'info');
-      const element = document.getElementById('renderableContainer');
+    let lastExportBlob = null;
+    let lastExportDataUrl = '';
+    let lastExportFilename = 'SUPER30_Timetable.png';
 
-      html2canvas(element, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        logging: false
-      }).then(canvas => {
-        const dataUrl = canvas.toDataURL('image/png');
+    function getPaletteBannerColors() {
+      const p = db.tableStyle || 'modern';
+      switch (p) {
+        case 'aurora': return { g1: '#097969', g2: '#0ea5e9', text: '#ffffff', accent: '#a7f3d0' };
+        case 'sunset': return { g1: '#f43f5e', g2: '#f97316', text: '#ffffff', accent: '#fef08a' };
+        case 'cyberpunk': return { g1: '#9333ea', g2: '#0284c7', text: '#ffffff', accent: '#67e8f9' };
+        case 'emerald-glow': return { g1: '#064e3b', g2: '#059669', text: '#ffffff', accent: '#6ee7b7' };
+        case 'cosmic': return { g1: '#1e1b4b', g2: '#581c87', text: '#fde047', accent: '#f59e0b' };
+        case 'gold': return { g1: '#0f172a', g2: '#1e293b', text: '#facc15', accent: '#fbbf24' };
+        case 'clean': return { g1: '#f1f5f9', g2: '#e2e8f0', text: '#0f172a', accent: '#2563eb' };
+        default: return { g1: '#1d4ed8', g2: '#0f172a', text: '#ffffff', accent: '#fcd34d' };
+      }
+    }
+
+    function renderHighResTimetableCanvas() {
+      const cls = db.classes.find(c => c.id === activeClassId);
+      const isClassMode = currentViewMode === 'class';
+      const titleEntity = isClassMode ? (cls ? cls.name : 'Batch') : (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty');
+      const subLabel = isClassMode ? 'BATCH TIMETABLE' : 'FACULTY CONSOLIDATED TIMETABLE';
+
+      // Build data rows
+      const rows = [];
+      const daySchedule = db.dateSchedules[activeDate] || {};
+
+      if (isClassMode) {
+        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+        const slots = [...(dailyData.slots || [])].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+        const assigns = dailyData.assignments || {};
+
+        slots.forEach(slot => {
+          const time = formatSlotRange(slot.start, slot.end);
+          if (slot.type === 'recess') {
+            rows.push({ time, type: 'recess', label: slot.label || 'Recess' });
+          } else if (slot.type === 'study') {
+            rows.push({ time, type: 'study', label: slot.label || 'Self-Study & Problem Solving Session' });
+          } else {
+            const assign = assigns[slot.id] || {};
+            const t = db.teachers.find(item => item.id === assign.teacherId)?.name || 'TBA';
+            const sub = assign.subject || 'TBA';
+            rows.push({ time, type: 'lecture', col2: t, col3: sub });
+          }
+        });
+      } else {
+        const teacher = db.teachers.find(t => t.id === activeTeacherId);
+        const tSlots = [];
+        db.classes.forEach(c => {
+          const clsDay = daySchedule[c.id];
+          if (!clsDay) return;
+          (clsDay.slots || []).forEach(slot => {
+            const assign = (clsDay.assignments || {})[slot.id];
+            if (assign && assign.teacherId === activeTeacherId) {
+              tSlots.push({ slot, batchName: c.name, subject: assign.subject || 'General Session' });
+            }
+          });
+        });
+        tSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
+        tSlots.forEach(item => {
+          rows.push({ time: formatSlotRange(item.slot.start, item.slot.end), type: 'lecture', col2: item.batchName, col3: item.subject });
+        });
+      }
+
+      // Smartphone Dimensions Setup (540px width x dynamic height @ 2x DPI)
+      const scale = 2;
+      const width = 540;
+      const headerHeight = 175;
+      const rowHeight = 52;
+      const footerHeight = 85;
+      const emptyHeight = rows.length === 0 ? 90 : 0;
+      const totalHeight = headerHeight + (rows.length * rowHeight) + emptyHeight + footerHeight;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width * scale;
+      canvas.height = totalHeight * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+
+      // Background Card
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, totalHeight);
+
+      // Top Palette Header Banner
+      const palette = getPaletteBannerColors();
+      const grad = ctx.createLinearGradient(0, 0, width, headerHeight);
+      grad.addColorStop(0, palette.g1);
+      grad.addColorStop(1, palette.g2);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, 115);
+
+      // Logo Emblem
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(16, 16, 52, 52, 14);
+      ctx.fill();
+
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = '900 22px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('S30', 42, 42);
+
+      // Academy Header Text
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = palette.text;
+      ctx.font = '900 17px Outfit, sans-serif';
+      ctx.fillText('SUPER 30 ACADEMY', 78, 38);
+
+      ctx.fillStyle = palette.accent;
+      ctx.font = '800 11px Outfit, sans-serif';
+      ctx.fillText('KARAD • JEE • NEET • MHT-CET', 78, 56);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '600 10.5px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('Smart Timetable Portal • Created by Ram Sir', 78, 72);
+
+      // Sub-bar with Target Entity and Date
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 115, width, 55);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, 170);
+      ctx.lineTo(width, 170);
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '800 13px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(`${subLabel}: ${titleEntity}`, 16, 138);
+
+      ctx.fillStyle = '#2563eb';
+      ctx.font = '700 11.5px Plus Jakarta Sans, sans-serif';
+      ctx.fillText(`Date: ${getPrettyDate(activeDate)}`, 16, 156);
+
+      // 3-Column Table Header
+      const tableHeadY = 170;
+      ctx.fillStyle = palette.g1;
+      ctx.fillRect(10, tableHeadY + 5, width - 20, 28);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('TIME SLOT', 22, tableHeadY + 23);
+      ctx.fillText(isClassMode ? 'TEACHER' : 'BATCH / CLASS', 190, tableHeadY + 23);
+      ctx.fillText('SUBJECT', 360, tableHeadY + 23);
+
+      let currentY = tableHeadY + 34;
+
+      if (rows.length === 0) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'italic 12px Plus Jakarta Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No sessions scheduled for this date.', width / 2, currentY + 40);
+        ctx.textAlign = 'left';
+        currentY += emptyHeight;
+      } else {
+        rows.forEach((row, i) => {
+          // Row Background Striping
+          if (row.type === 'recess') {
+            ctx.fillStyle = '#fef3c7';
+          } else if (row.type === 'study') {
+            ctx.fillStyle = '#f3e8ff';
+          } else {
+            ctx.fillStyle = i % 2 === 0 ? '#ffffff' : '#f8fafc';
+          }
+          ctx.fillRect(10, currentY, width - 20, rowHeight - 2);
+
+          // Row Bottom Border
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(10, currentY + rowHeight - 2);
+          ctx.lineTo(width - 10, currentY + rowHeight - 2);
+          ctx.stroke();
+
+          // Time Slot Column
+          ctx.fillStyle = '#0f172a';
+          ctx.font = '800 11px Plus Jakarta Sans, sans-serif';
+          ctx.fillText(row.time, 18, currentY + 30);
+
+          if (row.type === 'recess') {
+            // RECESS BADGE & LABEL
+            ctx.fillStyle = '#d97706';
+            ctx.beginPath();
+            ctx.roundRect(190, currentY + 16, 56, 19, 6);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 9.5px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('RECESS', 198, currentY + 29);
+
+            ctx.fillStyle = '#92400e';
+            ctx.font = 'italic 700 11.5px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(row.label || 'Recess', 255, currentY + 30);
+          } else if (row.type === 'study') {
+            // STUDY SESSION BADGE & LABEL
+            ctx.fillStyle = '#7e22ce';
+            ctx.beginPath();
+            ctx.roundRect(190, currentY + 16, 92, 19, 6);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 9px Plus Jakarta Sans, sans-serif';
+            ctx.fillText('STUDY SESSION', 196, currentY + 29);
+
+            ctx.fillStyle = '#581c87';
+            ctx.font = '700 11px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(row.label || 'Self-Study & Problem Solving', 290, currentY + 30);
+          } else {
+            // LECTURE: TEACHER & SUBJECT
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '800 11.5px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(row.col2, 190, currentY + 30);
+
+            ctx.fillStyle = '#2563eb';
+            ctx.font = '700 11.5px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(row.col3, 360, currentY + 30);
+          }
+
+          currentY += rowHeight;
+        });
+      }
+
+      // Official Footer
+      const footerY = currentY + 12;
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(16, footerY);
+      ctx.lineTo(width - 16, footerY);
+      ctx.stroke();
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '700 10px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('SUPER 30 ACADEMY, KARAD • JEE | NEET | MHT-CET', 16, footerY + 22);
+
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
+      ctx.fillText('Official Timetable • Created by Ram Sir', 16, footerY + 38);
+
+      return canvas;
+    }
+
+    function downloadTimetablePNG() {
+      showToast('Generating smartphone timetable image...', 'info');
+
+      try {
+        const canvas = renderHighResTimetableCanvas();
+        lastExportDataUrl = canvas.toDataURL('image/png');
+
         const cls = db.classes.find(c => c.id === activeClassId);
         const namePart = currentViewMode === 'class' ? (cls ? cls.name : 'Batch') : 'FacultySchedule';
-        const filename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
+        lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
 
-        // Direct Download attempt
+        canvas.toBlob(blob => {
+          lastExportBlob = blob;
+          const previewImg = document.getElementById('exportPreviewImg');
+          if (previewImg) previewImg.src = lastExportDataUrl;
+
+          openModal('modalExportPreview');
+          showToast('Timetable Image Ready!', 'success');
+        }, 'image/png');
+      } catch (err) {
+        console.error('Export failed', err);
+        showToast('Failed to generate image', 'error');
+      }
+    }
+
+    function mobileSaveOrDownload() {
+      if (!lastExportDataUrl) {
+        downloadTimetablePNG();
+        return;
+      }
+
+      try {
         const link = document.createElement('a');
-        link.download = filename;
-        link.href = dataUrl;
+        link.download = lastExportFilename;
+        link.href = lastExportBlob ? URL.createObjectURL(lastExportBlob) : lastExportDataUrl;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        showToast('Saving image to downloads...', 'success');
+      } catch (e) {
+        console.warn('Standard link download was blocked, trying Web Share', e);
+        mobileShareImageOrWhatsApp();
+      }
+    }
 
-        // Always show preview modal as fallback/convenience on Android WebView
-        const previewImg = document.getElementById('exportPreviewImg');
-        const modalAnchor = document.getElementById('exportDownloadAnchor');
-        if (previewImg && modalAnchor) {
-          previewImg.src = dataUrl;
-          modalAnchor.href = dataUrl;
-          modalAnchor.download = filename;
-        }
-        openModal('modalExportPreview');
-        showToast('Timetable Image Ready!', 'success');
-      }).catch(err => {
-        console.error('Export failed', err);
-        showToast('Failed to generate PNG image', 'error');
-      });
+    function mobileShareImageOrWhatsApp() {
+      if (lastExportBlob && navigator.canShare && navigator.canShare({ files: [new File([lastExportBlob], lastExportFilename, { type: 'image/png' })] })) {
+        const file = new File([lastExportBlob], lastExportFilename, { type: 'image/png' });
+        navigator.share({
+          files: [file],
+          title: 'SUPER 30 ACADEMY Timetable',
+          text: `SUPER 30 ACADEMY Timetable for ${getPrettyDate(activeDate)} (Created by Ram Sir)`
+        }).then(() => {
+          showToast('Shared successfully!', 'success');
+        }).catch(err => {
+          console.warn('Native share dismissed', err);
+        });
+      } else {
+        // Fallback to WhatsApp broadcast
+        shareViaWhatsApp();
+      }
+    }
+
+    function notifyLongPressHint() {
+      showToast('Touch and hold (long-press) this image to save directly to Photos', 'info');
     }
 
     function shareViaWhatsApp() {
