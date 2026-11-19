@@ -734,6 +734,9 @@
   <!-- TOAST CONTAINER -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
 
+  <!-- Hidden Sandbox for Full Uncropped Image Export -->
+  <div id="exportOffscreenHost" style="position:fixed; left:-9999px; top:-9999px; width:920px; z-index:-100; pointer-events:none; opacity:0;"></div>
+
   <!-- ============================================================== -->
   <!-- JAVASCRIPT APPLICATION CORE -->
   <!-- ============================================================== -->
@@ -1832,51 +1835,107 @@
     let lastExportFilename = 'Super30_Timetable.png';
 
     function downloadTimetablePNG() {
-      showToast('Generating timetable image...', 'info');
-      const element = document.getElementById('renderableContainer');
-      if (!element) return;
+      // If user is currently on Edit Timetable tab, render the export view first to ensure content is ready
+      if (currentTab !== 'view-export') {
+        renderExportView();
+      }
 
-      html2canvas(element, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        logging: false
-      }).then(canvas => {
-        canvas.toBlob(blob => {
-          if (!blob) {
-            showToast('Image conversion failed', 'error');
-            return;
-          }
-          lastExportBlob = blob;
-          const objectUrl = URL.createObjectURL(blob);
-          const cls = db.classes.find(c => c.id === activeClassId);
-          const namePart = currentViewMode === 'class' ? (cls ? cls.name : 'Batch') : 'FacultySchedule';
-          lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
+      showToast('Capturing complete timetable image...', 'info');
+      const sourceEl = document.getElementById('renderableContainer');
+      if (!sourceEl) {
+        showToast('Timetable container not found', 'error');
+        return;
+      }
 
-          // Update preview modal & download link
-          const previewImg = document.getElementById('exportPreviewImg');
-          const modalAnchor = document.getElementById('exportDownloadAnchor');
-          if (previewImg) previewImg.src = objectUrl;
-          if (modalAnchor) {
-            modalAnchor.href = objectUrl;
-            modalAnchor.download = lastExportFilename;
-          }
-
-          // Trigger standard download click with Object URL
-          const tempLink = document.createElement('a');
-          tempLink.href = objectUrl;
-          tempLink.download = lastExportFilename;
-          document.body.appendChild(tempLink);
-          tempLink.click();
-          document.body.removeChild(tempLink);
-
-          openModal('modalExportPreview');
-          showToast('Image ready! You can also long-press to save.', 'success');
-        }, 'image/png');
-      }).catch(err => {
-        console.error('Export failed', err);
-        showToast('Failed to generate PNG image', 'error');
+      // Clone into the dedicated 920px wide offscreen host to guarantee 100% full uncropped capture on mobile
+      const host = document.getElementById('exportOffscreenHost');
+      host.innerHTML = '';
+      
+      const clone = sourceEl.cloneNode(true);
+      clone.style.width = '900px';
+      clone.style.maxWidth = '900px';
+      clone.style.margin = '0';
+      clone.style.padding = '24px';
+      clone.style.backgroundColor = '#ffffff';
+      clone.style.boxSizing = 'border-box';
+      
+      // Make sure all text is fully visible and no horizontal overflow is clipped
+      const scrollableDivs = clone.querySelectorAll('.overflow-x-auto');
+      scrollableDivs.forEach(div => {
+        div.style.overflow = 'visible';
+        div.style.width = '100%';
       });
+
+      const tables = clone.querySelectorAll('table');
+      tables.forEach(tbl => {
+        tbl.style.width = '100%';
+        tbl.style.tableLayout = 'auto';
+      });
+
+      host.appendChild(clone);
+
+      // Re-run safe icon replacement on the cloned icons if needed
+      if (typeof window.lucide !== 'undefined' && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch(e) {}
+      }
+
+      // Allow DOM to settle for 60ms before canvas capture
+      setTimeout(() => {
+        html2canvas(clone, {
+          scale: 2, // High DPI clarity
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false,
+          width: 900,
+          windowWidth: 920,
+          scrollX: 0,
+          scrollY: 0
+        }).then(canvas => {
+          host.innerHTML = ''; // Clean up offscreen host
+
+          canvas.toBlob(blob => {
+            if (!blob) {
+              showToast('Image processing failed', 'error');
+              return;
+            }
+
+            lastExportBlob = blob;
+            const objectUrl = URL.createObjectURL(blob);
+            const cls = db.classes.find(c => c.id === activeClassId);
+            const namePart = currentViewMode === 'class' ? (cls ? cls.name : 'Batch') : 'FacultySchedule';
+            lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
+
+            // Prepare preview modal image & download anchor
+            const previewImg = document.getElementById('exportPreviewImg');
+            const modalAnchor = document.getElementById('exportDownloadAnchor');
+            if (previewImg) previewImg.src = objectUrl;
+            if (modalAnchor) {
+              modalAnchor.href = objectUrl;
+              modalAnchor.download = lastExportFilename;
+            }
+
+            // Attempt direct download
+            try {
+              const tempLink = document.createElement('a');
+              tempLink.href = objectUrl;
+              tempLink.download = lastExportFilename;
+              document.body.appendChild(tempLink);
+              tempLink.click();
+              document.body.removeChild(tempLink);
+            } catch (err) {
+              console.warn('Direct file download fallback initiated', err);
+            }
+
+            // Always open preview modal so Android users can long-press to save or use Share
+            openModal('modalExportPreview');
+            showToast('Full timetable image ready!', 'success');
+          }, 'image/png', 1.0);
+        }).catch(err => {
+          host.innerHTML = '';
+          console.error('Export failed', err);
+          showToast('Failed to generate full PNG image', 'error');
+        });
+      }, 70);
     }
 
     // Native Web Share API integration (perfect for Android APK & Mobile Browsers)
