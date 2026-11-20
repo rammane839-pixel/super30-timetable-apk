@@ -1586,7 +1586,7 @@
     }
 
     /* -------------------------------------------------------------
-       EXPORT TIMETABLE AS PNG
+       EXPORT TIMETABLE AS PNG (PRISTINE HIGH-DEFINITION ENGINE)
        ------------------------------------------------------------- */
     let latestExportBlob = null;
     let latestExportUrl = null;
@@ -1595,6 +1595,7 @@
     function ensureHtml2Canvas() {
       if (typeof window.html2canvas === 'function') return Promise.resolve(window.html2canvas);
       const sources = [
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
         'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
         'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
       ];
@@ -1602,7 +1603,7 @@
         let index = 0;
         const tryNext = () => {
           if (typeof window.html2canvas === 'function') return resolve(window.html2canvas);
-          if (index >= sources.length) return reject(new Error('Image export library could not be loaded. Check your internet connection and reopen the app.'));
+          if (index >= sources.length) return reject(new Error('Image export library could not be loaded. Please check your internet connection.'));
           const script = document.createElement('script');
           script.src = sources[index++];
           script.onload = () => typeof window.html2canvas === 'function' ? resolve(window.html2canvas) : tryNext();
@@ -1613,84 +1614,265 @@
       });
     }
 
-    async function downloadTimetablePNG() {
-      const element = document.getElementById('renderableContainer');
-      if (!element) {
-        showToast('Timetable is not ready. Please open the timetable view first.', 'error');
-        return;
+    /**
+     * Builds a dedicated, fixed-width (820px) document fragment formatted
+     * specifically for canvas capture without responsive squishing, emoji issues,
+     * or overlapping recess labels.
+     */
+    function buildExportDOM() {
+      const wrapper = document.createElement('div');
+      wrapper.id = 'exportCanvasWorker';
+      wrapper.style.cssText = `
+        position: fixed;
+        left: -9999px;
+        top: 0;
+        width: 820px;
+        background-color: #ffffff;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        color: #0f172a;
+        box-sizing: border-box;
+        padding: 32px 36px;
+        border: 1px solid #e2e8f0;
+      `;
+
+      const isTeacherView = currentViewMode === 'teacher';
+      const entityHeading = isTeacherView ? 'BATCH / CLASS' : 'FACULTY';
+      
+      let viewTitle = '';
+
+      if (isTeacherView) {
+        const teacher = db.teachers.find(t => t.id === activeTeacherId);
+        viewTitle = `FACULTY: ${teacher ? teacher.name.toUpperCase() : 'ALL FACULTY'}`;
+      } else {
+        const cls = db.classes.find(c => c.id === activeClassId);
+        viewTitle = `BATCH: ${cls ? cls.name.toUpperCase() : 'GENERAL BATCH'}`;
       }
+
+      // Generate Clean Rows from Database Directly (Eliminates Broken Unicode / Emojis)
+      let tableRowsHtml = '';
+
+      if (isTeacherView) {
+        const daySchedule = db.dateSchedules[activeDate] || {};
+        const teacherSlots = [];
+
+        db.classes.forEach(cls => {
+          const clsDay = daySchedule[cls.id];
+          if (!clsDay) return;
+          (clsDay.slots || []).forEach(slot => {
+            const assign = (clsDay.assignments || {})[slot.id];
+            if (assign && assign.teacherId === activeTeacherId) {
+              teacherSlots.push({
+                slot,
+                batchName: cls.name,
+                subject: assign.subject || 'General Session'
+              });
+            }
+          });
+        });
+
+        teacherSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
+
+        if (teacherSlots.length === 0) {
+          tableRowsHtml = `
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 36px; color: #64748b; font-size: 14px; font-weight: 600;">
+                No lectures scheduled for this faculty member on this date.
+              </td>
+            </tr>
+          `;
+        } else {
+          tableRowsHtml = teacherSlots.map((item, idx) => {
+            const timeStr = formatSlotRange(item.slot.start, item.slot.end);
+            const isStudy = item.slot.type === 'study';
+            const bgRow = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            return `
+              <tr style="background-color: ${bgRow}; border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #0f172a; white-space: nowrap;">
+                  ${timeStr}
+                </td>
+                <td style="padding: 14px 16px; text-align: center;">
+                  <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; ${isStudy ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
+                    ${isStudy ? 'STUDY' : 'LECTURE'}
+                  </span>
+                </td>
+                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #1d4ed8;">
+                  ${item.batchName}
+                </td>
+                <td style="padding: 14px 16px; font-weight: 600; font-size: 13px; color: #334155;">
+                  ${item.subject}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } else {
+        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+        const slots = dailyData.slots || [];
+        const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+        const assigns = dailyData.assignments || {};
+
+        if (sortedSlots.length === 0) {
+          tableRowsHtml = `
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 36px; color: #64748b; font-size: 14px; font-weight: 600;">
+                No slots configured for this batch on this date.
+              </td>
+            </tr>
+          `;
+        } else {
+          tableRowsHtml = sortedSlots.map((slot, idx) => {
+            const timeStr = formatSlotRange(slot.start, slot.end);
+
+            if (slot.type === 'recess') {
+              return `
+                <tr style="background-color: #fefce8; border-bottom: 1px solid #fef08a; border-top: 1px solid #fef08a;">
+                  <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #854d0e; white-space: nowrap;">
+                    ${timeStr}
+                  </td>
+                  <td style="padding: 14px 16px; text-align: center;">
+                    <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 900; letter-spacing: 0.05em; background: #fef08a; color: #713f12;">
+                      RECESS
+                    </span>
+                  </td>
+                  <td colspan="2" style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #854d0e; font-style: italic;">
+                    ${slot.label || 'Tea & Interval Break'}
+                  </td>
+                </tr>
+              `;
+            }
+
+            const currentAssign = assigns[slot.id] || {};
+            const teacherObj = db.teachers.find(t => t.id === currentAssign.teacherId);
+            const teacherName = teacherObj ? teacherObj.name : '—';
+            const subjectName = currentAssign.subject || (teacherObj ? 'General Session' : '—');
+            const isStudy = slot.type === 'study';
+            const bgRow = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+
+            return `
+              <tr style="background-color: ${bgRow}; border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #0f172a; white-space: nowrap;">
+                  ${timeStr}
+                </td>
+                <td style="padding: 14px 16px; text-align: center;">
+                  <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; ${isStudy ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
+                    ${isStudy ? 'STUDY' : 'LECTURE'}
+                  </span>
+                </td>
+                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: ${teacherObj ? '#1e293b' : '#94a3b8'};">
+                  ${teacherName}
+                </td>
+                <td style="padding: 14px 16px; font-weight: 600; font-size: 13px; color: ${currentAssign.subject ? '#334155' : '#94a3b8'};">
+                  ${subjectName}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      wrapper.innerHTML = `
+        <!-- Top Institutional Header -->
+        <div style="border-bottom: 3px solid #1e3a8a; padding-bottom: 18px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #1d4ed8, #0f172a); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #facc15; font-size: 22px; font-weight: 900; box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25);">
+                S30
+              </div>
+              <div>
+                <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: #0f172a; text-transform: uppercase;">
+                  SUPER 30 ACADEMY, KARAD
+                </h1>
+                <p style="margin: 3px 0 0 0; font-size: 12px; font-weight: 800; color: #2563eb; letter-spacing: 0.06em; text-transform: uppercase;">
+                  JEE &bull; NEET &bull; MHT-CET &bull; FOUNDATION
+                </p>
+              </div>
+            </div>
+
+            <div style="text-align: right;">
+              <div style="display: inline-block; padding: 4px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 11px; font-weight: 800; color: #1e40af; text-transform: uppercase; letter-spacing: 0.05em;">
+                OFFICIAL TIMETABLE
+              </div>
+              <div style="margin-top: 5px; font-size: 12px; font-weight: 700; color: #475569;">
+                Date: <span style="color: #0f172a; font-weight: 800;">${getPrettyDate(activeDate)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch & Subtitle Strip -->
+          <div style="margin-top: 14px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; font-weight: 800; color: #1e3a8a;">
+              ${viewTitle}
+            </div>
+            <div style="font-size: 11px; font-weight: 700; color: #64748b;">
+              Created by <span style="color: #0f172a; font-weight: 800;">Ram Sir</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crisp Grid Table -->
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #ffffff;">
+              <th style="width: 195px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">TIME</th>
+              <th style="width: 110px; padding: 12px 16px; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">SESSION</th>
+              <th style="width: 215px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">${entityHeading}</th>
+              <th style="width: 230px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">SUBJECT</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRowsHtml}
+          </tbody>
+        </table>
+
+        <!-- Official Seal / Footer Note -->
+        <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b;">
+          <div>
+            <span style="font-weight: 800; color: #1e3a8a;">SUPER 30 ACADEMY</span> &bull; Karad Academic Branch
+          </div>
+          <div style="font-weight: 700; color: #059669; display: flex; align-items: center; gap: 4px;">
+            &#10003; Verified Academic Schedule
+          </div>
+          <div>
+            Mentor: <span style="font-weight: 800; color: #0f172a;">Ram Sir</span>
+          </div>
+        </div>
+      `;
+
+      return wrapper;
+    }
+
+    async function downloadTimetablePNG() {
       const exportButtons = document.querySelectorAll('[onclick="downloadTimetablePNG()"]');
       exportButtons.forEach(btn => { btn.disabled = true; btn.classList.add('opacity-60'); });
-      showToast('Preparing your timetable image...', 'info');
+      showToast('Rendering high-definition timetable image...', 'info');
+
+      let workerEl = null;
 
       try {
         const renderCanvas = await ensureHtml2Canvas();
         if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+        // Build pristine, un-truncated layout directly from data
+        workerEl = buildExportDOM();
+        document.body.appendChild(workerEl);
+
+        // Allow layout calculation to settle
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-        const canvas = await renderCanvas(element, {
-          scale: Math.min(2, Math.max(1, (window.devicePixelRatio || 1))),
+
+        const canvas = await renderCanvas(workerEl, {
+          scale: 2, // 2x crisp retina resolution
           backgroundColor: '#ffffff',
           useCORS: true,
           allowTaint: false,
           logging: false,
-          imageTimeout: 15000,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: Math.max(element.scrollWidth, element.clientWidth),
-          onclone: clonedDoc => {
-            const cloned = clonedDoc.getElementById('renderableContainer');
-            if (cloned) {
-              cloned.style.width = element.scrollWidth + 'px';
-              cloned.style.maxWidth = 'none';
-              cloned.style.overflow = 'visible';
-            }
-            const table = clonedDoc.getElementById('mainTimetable');
-            if (table) {
-              const teacherView = (clonedDoc.getElementById('badgeViewLabel')?.textContent || '').startsWith('Faculty:');
-              const headRow = table.querySelector('thead tr');
-              if (headRow) {
-                headRow.innerHTML = teacherView
-                  ? '<th>Time</th><th>Batch / Class</th><th>Subject</th>'
-                  : '<th>Time</th><th>Teacher</th><th>Subject</th>';
-              }
-              table.querySelectorAll('tbody tr').forEach(row => {
-                const cells = Array.from(row.children);
-                if (cells.length >= 5) {
-                  const timeCell = cells[0];
-                  const middleCell = teacherView ? cells[2] : cells[2];
-                  const subjectCell = cells[3];
-                  [middleCell, subjectCell].forEach(cell => {
-                    if (!cell) return;
-                    cell.querySelectorAll('select').forEach(select => {
-                      const selected = select.options[select.selectedIndex];
-                      const value = selected && selected.value ? selected.textContent.replace(/^[🟢🔴]\s*/, '').replace(/\s*\(Busy:.*\)$/, '').trim() : '—';
-                      const span = clonedDoc.createElement('span');
-                      span.textContent = value || '—';
-                      span.style.cssText = 'display:inline-block;padding:7px 10px;font-weight:700;color:#172554;background:#f1f5f9;border-radius:8px;min-width:90px;';
-                      select.replaceWith(span);
-                    });
-                  });
-                  row.replaceChildren(timeCell, middleCell, subjectCell);
-                } else if (cells.length === 4) {
-                  const timeCell = cells[0];
-                  const recessCell = cells[2];
-                  recessCell.colSpan = 2;
-                  row.replaceChildren(timeCell, cells[1], recessCell);
-                }
-              });
-              table.style.width = '100%';
-              table.style.tableLayout = 'fixed';
-              table.querySelectorAll('th, td').forEach(cell => {
-                cell.style.padding = '12px 14px';
-                cell.style.borderBottom = '1px solid #e2e8f0';
-                cell.style.verticalAlign = 'middle';
-                cell.style.fontSize = '13px';
-              });
-            }
-          }
+          width: 820,
+          windowWidth: 820
         });
 
-        const blob = await new Promise((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('Could not create PNG image.')), 'image/png'));
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob(res => res ? resolve(res) : reject(new Error('Failed to encode PNG image')), 'image/png');
+        });
+
         if (latestExportUrl) URL.revokeObjectURL(latestExportUrl);
         latestExportBlob = blob;
         latestExportUrl = URL.createObjectURL(blob);
@@ -1705,13 +1887,16 @@
         modalAnchor.href = latestExportUrl;
         modalAnchor.download = latestExportFilename;
         document.getElementById('exportShareBtn').classList.toggle('hidden', !(navigator.share && navigator.canShare));
-        document.getElementById('exportHelpText').textContent = 'Image ready: ' + latestExportFilename + '. Tap Save Image. If saving is blocked inside this installed app, tap Open Image and long-press the picture.';
+        document.getElementById('exportHelpText').textContent = 'Image ready: ' + latestExportFilename + '. Tap Save Image to download.';
         openModal('modalExportPreview');
-        showToast('Timetable image is ready. Tap Save Image.', 'success');
+        showToast('Image generated with crisp borders!', 'success');
       } catch (err) {
         console.error('Timetable image export failed:', err);
-        showToast(err && err.message ? err.message : 'Image export failed. Please try Print / Save as PDF.', 'error');
+        showToast(err && err.message ? err.message : 'Image export failed. Try using Print / Save as PDF.', 'error');
       } finally {
+        if (workerEl && workerEl.parentNode) {
+          workerEl.parentNode.removeChild(workerEl);
+        }
         exportButtons.forEach(btn => { btn.disabled = false; btn.classList.remove('opacity-60'); });
       }
     }
