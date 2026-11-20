@@ -724,7 +724,7 @@
   <!-- MODAL 4: IMAGE EXPORT PREVIEW -->
   <!-- ============================================================== -->
   <div id="modalExportPreview" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 border border-slate-200 shadow-2xl relative flex flex-col max-h-[90vh]">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 border border-slate-200 shadow-2xl relative flex flex-col max-h-[92vh]">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
           <i data-lucide="image" class="w-5 h-5 text-blue-600"></i> High-Resolution Timetable Image
@@ -734,19 +734,30 @@
         </button>
       </div>
 
-      <div class="mt-3 flex-1 overflow-y-auto rounded-2xl border border-slate-200 p-2 bg-slate-50 flex items-center justify-center">
-        <img id="exportPreviewImg" src="" alt="Timetable Export" class="max-w-full h-auto rounded-lg shadow-sm">
+      <div class="mt-3 flex-1 overflow-y-auto rounded-2xl border border-slate-200 p-2 sm:p-3 bg-slate-50 flex flex-col items-center justify-center">
+        <!-- Touch/long-press enabled image preview -->
+        <img id="exportPreviewImg" src="" alt="Timetable Export" class="max-w-full h-auto rounded-xl shadow-md cursor-pointer select-auto touch-manipulation" style="-webkit-user-select: auto; user-select: auto; pointer-events: auto;">
+        <p class="text-[11px] text-slate-500 font-semibold mt-2 text-center">
+          💡 <span class="text-blue-700 font-bold">Mobile Tip:</span> You can also tap &amp; hold (long-press) the image to save directly to your gallery.
+        </p>
       </div>
 
       <div class="mt-4 pt-3 border-t border-slate-100 space-y-3 text-xs">
-        <p id="exportHelpText" class="text-slate-600 text-center">Your timetable image is ready. Tap Save Image. If your installed app does not save it, use Open Image and long-press the image to save it.</p>
+        <p id="exportHelpText" class="text-slate-600 text-center font-medium">
+          Timetable image ready. Tap <strong class="text-slate-800">Save Image</strong> below to download or share.
+        </p>
         <div class="flex flex-wrap items-center justify-center gap-2">
-          <button onclick="closeModal('modalExportPreview')" class="px-4 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Close</button>
-          <button id="exportOpenImageBtn" onclick="openExportImage()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl">Open Image</button>
-          <button id="exportShareBtn" onclick="shareExportImage()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl hidden">Share</button>
-          <a id="exportDownloadAnchor" download="Super30_Timetable.png" href="" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md flex items-center gap-1.5">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i> Save Image
-          </a>
+          <button onclick="closeModal('modalExportPreview')" class="px-4 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+            Close
+          </button>
+          <button id="exportShareBtn" onclick="shareNativeImage()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition">
+            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+            <span>Share / Send</span>
+          </button>
+          <button onclick="saveOrShareImage()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl shadow-md flex items-center gap-1.5 transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Save Image</span>
+          </button>
         </div>
       </div>
     </div>
@@ -774,6 +785,75 @@
     };
 
     const STORAGE_KEY = 'SUPER30_ACADEMY_KARAD_TIMETABLE_V5';
+
+    /* -------------------------------------------------------------
+       DATE & TIME UTILITIES (Defined upfront to prevent ReferenceErrors)
+       ------------------------------------------------------------- */
+    function formatDateToYMD(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function getTodayString() {
+      return formatDateToYMD(new Date());
+    }
+
+    function getTomorrowString() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      return formatDateToYMD(d);
+    }
+
+    function formatTime24to12(time24) {
+      if (!time24) return '';
+      const [hStr, mStr] = time24.split(':');
+      let h = parseInt(hStr, 10);
+      const m = mStr || '00';
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${String(h).padStart(2, '0')}:${m} ${ampm}`;
+    }
+
+    function formatSlotRange(start, end) {
+      return `${formatTime24to12(start)} – ${formatTime24to12(end)}`;
+    }
+
+    function timeToMinutes(t) {
+      if (!t) return 0;
+      const [h, m] = t.split(':').map(Number);
+      return (h * 60) + (m || 0);
+    }
+
+    function getPrettyDate(ymd) {
+      if (!ymd) return '';
+      const [y, m, d] = ymd.split('-');
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString('en-IN', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    function setTodayDate() {
+      syncDate(getTodayString());
+    }
+
+    function setTomorrowDate() {
+      syncDate(getTomorrowString());
+    }
+
+    function syncDate(newDate) {
+      activeDate = newDate;
+      const dateInput = document.getElementById('activeDateInput');
+      if (dateInput) dateInput.value = newDate;
+      renderActiveView();
+      renderOverviewTab();
+      showToast(`Schedule loaded for ${getPrettyDate(newDate)}`, 'info');
+    }
 
     // Master default definitions (fallback templates)
     const defaultDatabase = {
@@ -837,7 +917,90 @@
     let currentViewMode = 'class'; // 'class' or 'teacher'
 
     /* -------------------------------------------------------------
-       VIEW MODE TOGGLING & SELECTOR POPULATION
+       DATABASE INIT & PERSISTENCE
+       ------------------------------------------------------------- */
+    function loadDatabase() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          db = JSON.parse(stored);
+        } else {
+          db = JSON.parse(JSON.stringify(defaultDatabase));
+          seedInitialAssignments(db);
+          saveDatabase();
+        }
+      } catch (e) {
+        db = JSON.parse(JSON.stringify(defaultDatabase));
+        seedInitialAssignments(db);
+        saveDatabase();
+      }
+
+      if (!db.dateSchedules) db.dateSchedules = {};
+
+      db.classes.forEach(c => {
+        if (!c.defaultSlots) {
+          c.defaultSlots = c.slots || c.masterSlots || [];
+        }
+      });
+    }
+
+    function saveDatabase() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      } catch (e) {
+        console.error('Storage save failed', e);
+      }
+    }
+
+    function getOrCreateDailySchedule(date, classId) {
+      if (!db.dateSchedules[date]) {
+        db.dateSchedules[date] = {};
+      }
+      if (!db.dateSchedules[date][classId]) {
+        const cls = db.classes.find(c => c.id === classId);
+        const templateSlots = (cls && cls.defaultSlots && cls.defaultSlots.length > 0)
+          ? cls.defaultSlots
+          : (cls && cls.slots ? cls.slots : []);
+
+        db.dateSchedules[date][classId] = {
+          slots: JSON.parse(JSON.stringify(templateSlots)),
+          assignments: {}
+        };
+      }
+      return db.dateSchedules[date][classId];
+    }
+
+    function seedInitialAssignments(data) {
+      const today = getTodayString();
+      if (!data.dateSchedules) data.dateSchedules = {};
+      if (!data.dateSchedules[today]) data.dateSchedules[today] = {};
+
+      const c1 = data.classes.find(c => c.id === 'c1');
+      if (c1) {
+        data.dateSchedules[today]['c1'] = {
+          slots: JSON.parse(JSON.stringify(c1.defaultSlots)),
+          assignments: {
+            's1': { teacherId: 't1', subject: 'Advanced Mathematics' },
+            's2': { teacherId: 't2', subject: 'Physics Mechanics' },
+            's4': { teacherId: 't3', subject: 'Organic Chemistry' }
+          }
+        };
+      }
+
+      const c2 = data.classes.find(c => c.id === 'c2');
+      if (c2) {
+        data.dateSchedules[today]['c2'] = {
+          slots: JSON.parse(JSON.stringify(c2.defaultSlots)),
+          assignments: {
+            's2_1': { teacherId: 't4', subject: 'Botany' },
+            's2_2': { teacherId: 't5', subject: 'Physical Chemistry' }
+          }
+        };
+      }
+    }
+
+    /* -------------------------------------------------------------
+       VIEW CONTROLS & SELECTION
        ------------------------------------------------------------- */
     function setViewMode(mode) {
       currentViewMode = mode;
@@ -850,18 +1013,18 @@
       const clearAllBtn = document.getElementById('btnClearAllRows');
 
       if (mode === 'class') {
-        classBtn.className = "px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 bg-white text-blue-700 shadow-sm";
-        teacherBtn.className = "px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 text-slate-600 hover:text-slate-900";
-        classWrapper.classList.remove('hidden');
-        teacherWrapper.classList.add('hidden');
+        if (classBtn) classBtn.className = "px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 bg-white text-blue-700 shadow-sm";
+        if (teacherBtn) teacherBtn.className = "px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 text-slate-600 hover:text-slate-900";
+        if (classWrapper) classWrapper.classList.remove('hidden');
+        if (teacherWrapper) teacherWrapper.classList.add('hidden');
         if (addSlotBtn) addSlotBtn.classList.remove('hidden');
         if (copyDayBtn) copyDayBtn.classList.remove('hidden');
         if (clearAllBtn) clearAllBtn.classList.remove('hidden');
       } else {
-        teacherBtn.className = "px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 bg-white text-blue-700 shadow-sm";
-        classBtn.className = "px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 text-slate-600 hover:text-slate-900";
-        teacherWrapper.classList.remove('hidden');
-        classWrapper.classList.add('hidden');
+        if (teacherBtn) teacherBtn.className = "px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 bg-white text-blue-700 shadow-sm";
+        if (classBtn) classBtn.className = "px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 text-slate-600 hover:text-slate-900";
+        if (teacherWrapper) teacherWrapper.classList.remove('hidden');
+        if (classWrapper) classWrapper.classList.add('hidden');
         if (addSlotBtn) addSlotBtn.classList.add('hidden');
         if (copyDayBtn) copyDayBtn.classList.add('hidden');
         if (clearAllBtn) clearAllBtn.classList.add('hidden');
@@ -955,158 +1118,6 @@
     }
 
     /* -------------------------------------------------------------
-       DATABASE INIT & PERSISTENCE
-       ------------------------------------------------------------- */
-    function loadDatabase() {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          db = JSON.parse(stored);
-        } else {
-          db = JSON.parse(JSON.stringify(defaultDatabase));
-          seedInitialAssignments(db);
-          saveDatabase();
-        }
-      } catch (e) {
-        db = JSON.parse(JSON.stringify(defaultDatabase));
-        seedInitialAssignments(db);
-        saveDatabase();
-      }
-
-      if (!db.dateSchedules) db.dateSchedules = {};
-
-      db.classes.forEach(c => {
-        if (!c.defaultSlots) {
-          c.defaultSlots = c.slots || c.masterSlots || [];
-        }
-      });
-    }
-
-    function saveDatabase() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-      } catch (e) {
-        console.error('Storage save failed', e);
-      }
-    }
-
-    function getOrCreateDailySchedule(date, classId) {
-      if (!db.dateSchedules[date]) {
-        db.dateSchedules[date] = {};
-      }
-      if (!db.dateSchedules[date][classId]) {
-        const cls = db.classes.find(c => c.id === classId);
-        const templateSlots = (cls && cls.defaultSlots && cls.defaultSlots.length > 0)
-          ? cls.defaultSlots
-          : (cls && cls.slots ? cls.slots : []);
-
-        db.dateSchedules[date][classId] = {
-          slots: JSON.parse(JSON.stringify(templateSlots)),
-          assignments: {}
-        };
-      }
-      return db.dateSchedules[date][classId];
-    }
-
-    function seedInitialAssignments(data) {
-      const today = getTodayString();
-      if (!data.dateSchedules) data.dateSchedules = {};
-      if (!data.dateSchedules[today]) data.dateSchedules[today] = {};
-
-      const c1 = data.classes.find(c => c.id === 'c1');
-      if (c1) {
-        data.dateSchedules[today]['c1'] = {
-          slots: JSON.parse(JSON.stringify(c1.defaultSlots)),
-          assignments: {
-            's1': { teacherId: 't1', subject: 'Advanced Mathematics' },
-            's2': { teacherId: 't2', subject: 'Physics Mechanics' },
-            's4': { teacherId: 't3', subject: 'Organic Chemistry' }
-          }
-        };
-      }
-
-      const c2 = data.classes.find(c => c.id === 'c2');
-      if (c2) {
-        data.dateSchedules[today]['c2'] = {
-          slots: JSON.parse(JSON.stringify(c2.defaultSlots)),
-          assignments: {
-            's2_1': { teacherId: 't4', subject: 'Botany' },
-            's2_2': { teacherId: 't5', subject: 'Physical Chemistry' }
-          }
-        };
-      }
-    }
-
-    /* -------------------------------------------------------------
-       DATE & TIME UTILITIES
-       ------------------------------------------------------------- */
-    function getTodayString() {
-      const d = new Date();
-      return formatDateToYMD(d);
-    }
-
-    function getTomorrowString() {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      return formatDateToYMD(d);
-    }
-
-    function formatDateToYMD(d) {
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
-    }
-
-    function formatTime24to12(time24) {
-      if (!time24) return '';
-      const [hStr, mStr] = time24.split(':');
-      let h = parseInt(hStr, 10);
-      const m = mStr || '00';
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      return `${String(h).padStart(2, '0')}:${m} ${ampm}`;
-    }
-
-    function formatSlotRange(start, end) {
-      return `${formatTime24to12(start)} – ${formatTime24to12(end)}`;
-    }
-
-    function timeToMinutes(t) {
-      if (!t) return 0;
-      const [h, m] = t.split(':').map(Number);
-      return (h * 60) + (m || 0);
-    }
-
-    function getPrettyDate(ymd) {
-      if (!ymd) return '';
-      const [y, m, d] = ymd.split('-');
-      const dateObj = new Date(y, m - 1, d);
-      return dateObj.toLocaleDateString('en-IN', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-
-    function setTodayDate() {
-      syncDate(getTodayString());
-    }
-
-    function setTomorrowDate() {
-      syncDate(getTomorrowString());
-    }
-
-    function syncDate(newDate) {
-      activeDate = newDate;
-      document.getElementById('activeDateInput').value = newDate;
-      renderActiveView();
-      renderOverviewTab();
-      showToast(`Schedule loaded for ${getPrettyDate(newDate)}`, 'info');
-    }
-
-    /* -------------------------------------------------------------
        TEACHER CONFLICT DETECTION HELPER
        ------------------------------------------------------------- */
     function checkTeacherConflict(teacherId, targetSlot, currentClassId) {
@@ -1151,31 +1162,39 @@
     }
 
     /* -------------------------------------------------------------
-       RENDER 1: CLASS-WISE TIMETABLE (DATE-ISOLATED & NARROW UI)
+       RENDER 1: CLASS-WISE TIMETABLE
        ------------------------------------------------------------- */
     function renderClassTimetable() {
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Selected Batch';
 
-      document.getElementById('badgeViewLabel').innerText = `Batch: ${className}`;
-      document.getElementById('headerDetailSubtext').innerText = `Schedule Date: ${getPrettyDate(activeDate)}`;
-      document.getElementById('thEntityCol').innerText = 'Teacher';
+      const badgeLabel = document.getElementById('badgeViewLabel');
+      const subtext = document.getElementById('headerDetailSubtext');
+      const thEntity = document.getElementById('thEntityCol');
+      if (badgeLabel) badgeLabel.innerText = `Batch: ${className}`;
+      if (subtext) subtext.innerText = `Schedule Date: ${getPrettyDate(activeDate)}`;
+      if (thEntity) thEntity.innerText = 'Teacher';
 
       const tbody = document.getElementById('ttTableBody');
       const emptyNotice = document.getElementById('ttEmptyNotice');
+      if (!tbody) return;
 
       const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
       const slots = dailyData.slots || [];
 
       if (slots.length === 0) {
         tbody.innerHTML = '';
-        emptyNotice.classList.remove('hidden');
-        document.getElementById('emptyNoticeTitle').innerText = 'No slots scheduled for this batch on this date';
-        document.getElementById('emptyNoticeSubtitle').innerText = 'Click "+ Add Time Slot" above to add a slot for this day.';
+        if (emptyNotice) {
+          emptyNotice.classList.remove('hidden');
+          const title = document.getElementById('emptyNoticeTitle');
+          const sub = document.getElementById('emptyNoticeSubtitle');
+          if (title) title.innerText = 'No slots scheduled for this batch on this date';
+          if (sub) sub.innerText = 'Click "+ Add Shared Slot" above to add a slot.';
+        }
         return;
       }
 
-      emptyNotice.classList.add('hidden');
+      if (emptyNotice) emptyNotice.classList.add('hidden');
 
       const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
       const assigns = dailyData.assignments || {};
@@ -1183,7 +1202,6 @@
       tbody.innerHTML = sortedSlots.map(slot => {
         const timeStr = formatSlotRange(slot.start, slot.end);
 
-        // CASE 1: RECESS / BREAK
         if (slot.type === 'recess') {
           return `
             <tr class="bg-amber-50/70 border-y border-amber-200 text-amber-900">
@@ -1215,7 +1233,6 @@
           `;
         }
 
-        // CASE 2: REGULAR LECTURE OR STUDY
         const currentAssign = assigns[slot.id] || {};
         const selTeacherId = currentAssign.teacherId || '';
         const selSubject = currentAssign.subject || '';
@@ -1253,14 +1270,12 @@
 
         return `
           <tr class="hover:bg-slate-50 transition ${!conflict.available ? 'bg-rose-50/60' : ''}">
-            
             <td class="p-2 sm:p-2.5 font-bold whitespace-nowrap text-slate-900 text-xs">
               <div class="flex items-center gap-1.5">
                 <i data-lucide="clock" class="w-3.5 h-3.5 ${isStudy ? 'text-purple-600' : 'text-blue-600'}"></i>
                 <span>${timeStr}</span>
               </div>
             </td>
-
             <td class="p-2 sm:p-2.5">
               ${isStudy ? `
                 <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-purple-100 text-purple-800">
@@ -1272,7 +1287,6 @@
                 </span>
               `}
             </td>
-
             <td class="p-2 sm:p-2.5">
               <div class="flex items-center gap-1.5">
                 <select onchange="updateClassSlotTeacher('${slot.id}', this.value)" class="w-full max-w-[180px] sm:max-w-xs px-2 py-1 text-xs font-bold rounded-xl border ${!conflict.available ? 'border-rose-400 bg-rose-50 text-rose-800' : selTeacherId ? 'border-emerald-300 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-slate-50'} outline-none focus:ring-2 focus:ring-blue-500">
@@ -1280,13 +1294,11 @@
                 </select>
               </div>
             </td>
-
             <td class="p-2 sm:p-2.5">
               <select onchange="updateClassSlotSubject('${slot.id}', this.value)" ${!selTeacherId ? 'disabled' : ''} class="w-full max-w-[160px] sm:max-w-xs px-2 py-1 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-40">
                 ${subjectOpts}
               </select>
             </td>
-
             <td class="p-2 sm:p-2.5 text-right no-print">
               <div class="inline-flex items-center gap-1">
                 <button onclick="clearSlotEntry('${slot.id}')" class="px-2 py-1 text-[11px] font-bold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200" title="Make entry empty on this date">
@@ -1295,12 +1307,11 @@
                 <button onclick="openEditSlotModal('${slot.id}')" class="px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-50 rounded-lg border border-slate-200" title="Edit slot start/end or label">
                   <i data-lucide="edit-2" class="w-3 h-3 inline"></i> Edit
                 </button>
-                <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="px-2 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200" title="Remove row from ${getPrettyDate(activeDate)} only">
+                <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="px-2 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200" title="Remove row from this date only">
                   <i data-lucide="trash-2" class="w-3 h-3 inline"></i>
                 </button>
               </div>
             </td>
-
           </tr>
         `;
       }).join('');
@@ -1315,12 +1326,16 @@
       const teacher = db.teachers.find(t => t.id === activeTeacherId);
       const teacherName = teacher ? teacher.name : 'Selected Faculty';
 
-      document.getElementById('badgeViewLabel').innerText = `Faculty: ${teacherName}`;
-      document.getElementById('headerDetailSubtext').innerText = `Consolidated Schedule &bull; Date: ${getPrettyDate(activeDate)}`;
-      document.getElementById('thEntityCol').innerText = 'Batch / Class';
+      const badgeLabel = document.getElementById('badgeViewLabel');
+      const subtext = document.getElementById('headerDetailSubtext');
+      const thEntity = document.getElementById('thEntityCol');
+      if (badgeLabel) badgeLabel.innerText = `Faculty: ${teacherName}`;
+      if (subtext) subtext.innerText = `Consolidated Schedule &bull; Date: ${getPrettyDate(activeDate)}`;
+      if (thEntity) thEntity.innerText = 'Batch / Class';
 
       const tbody = document.getElementById('ttTableBody');
       const emptyNotice = document.getElementById('ttEmptyNotice');
+      if (!tbody) return;
 
       const teacherSlots = [];
       const daySchedule = db.dateSchedules[activeDate] || {};
@@ -1349,13 +1364,17 @@
 
       if (teacherSlots.length === 0) {
         tbody.innerHTML = '';
-        emptyNotice.classList.remove('hidden');
-        document.getElementById('emptyNoticeTitle').innerText = `${teacherName} has no lectures on ${getPrettyDate(activeDate)}`;
-        document.getElementById('emptyNoticeSubtitle').innerText = 'Assign lectures in Class-wise mode or pick another faculty member.';
+        if (emptyNotice) {
+          emptyNotice.classList.remove('hidden');
+          const title = document.getElementById('emptyNoticeTitle');
+          const sub = document.getElementById('emptyNoticeSubtitle');
+          if (title) title.innerText = `${teacherName} has no lectures on ${getPrettyDate(activeDate)}`;
+          if (sub) sub.innerText = 'Assign lectures in Class-wise mode or pick another faculty member.';
+        }
         return;
       }
 
-      emptyNotice.classList.add('hidden');
+      if (emptyNotice) emptyNotice.classList.add('hidden');
 
       tbody.innerHTML = teacherSlots.map(item => {
         const timeStr = formatSlotRange(item.slot.start, item.slot.end);
@@ -1397,7 +1416,8 @@
 
     function jumpToBatch(batchId) {
       activeClassId = batchId;
-      document.getElementById('activeClassSelect').value = batchId;
+      const classSelect = document.getElementById('activeClassSelect');
+      if (classSelect) classSelect.value = batchId;
       setViewMode('class');
     }
 
@@ -1547,9 +1567,12 @@
        ------------------------------------------------------------- */
     function openCopyDateModal() {
       const cls = db.classes.find(c => c.id === activeClassId);
-      document.getElementById('copyClassName').value = cls ? cls.name : '';
-      document.getElementById('copySourceDate').value = activeDate;
-      document.getElementById('copyTargetDate').value = getTomorrowString();
+      const nameInput = document.getElementById('copyClassName');
+      if (nameInput) nameInput.value = cls ? cls.name : '';
+      const srcInput = document.getElementById('copySourceDate');
+      const tgtInput = document.getElementById('copyTargetDate');
+      if (srcInput) srcInput.value = activeDate;
+      if (tgtInput) tgtInput.value = getTomorrowString();
       openModal('modalCopyDate');
     }
 
@@ -1586,7 +1609,7 @@
     }
 
     /* -------------------------------------------------------------
-       EXPORT TIMETABLE AS PNG (PRISTINE HIGH-DEFINITION ENGINE)
+       EXPORT TIMETABLE AS PNG (OFF-SCREEN FIXED 850px BUFFER)
        ------------------------------------------------------------- */
     let latestExportBlob = null;
     let latestExportUrl = null;
@@ -1603,10 +1626,12 @@
         let index = 0;
         const tryNext = () => {
           if (typeof window.html2canvas === 'function') return resolve(window.html2canvas);
-          if (index >= sources.length) return reject(new Error('Image export library could not be loaded. Please check your internet connection.'));
+          if (index >= sources.length) {
+            return reject(new Error('Image export library could not be loaded. Please check your internet connection.'));
+          }
           const script = document.createElement('script');
           script.src = sources[index++];
-          script.onload = () => typeof window.html2canvas === 'function' ? resolve(window.html2canvas) : tryNext();
+          script.onload = () => (typeof window.html2canvas === 'function' ? resolve(window.html2canvas) : tryNext());
           script.onerror = tryNext;
           document.head.appendChild(script);
         };
@@ -1614,52 +1639,45 @@
       });
     }
 
-    /**
-     * Builds a dedicated, fixed-width (820px) document fragment formatted
-     * specifically for canvas capture without responsive squishing, emoji issues,
-     * or overlapping recess labels.
-     */
+    // Build a dedicated offscreen DOM element (width: 850px) to guarantee crisp rendering without mobile shrinkage
     function buildExportDOM() {
       const wrapper = document.createElement('div');
-      wrapper.id = 'exportCanvasWorker';
+      wrapper.id = 'offscreen-export-wrapper';
       wrapper.style.cssText = `
-        position: fixed;
+        position: absolute;
         left: -9999px;
         top: 0;
-        width: 820px;
+        width: 850px;
         background-color: #ffffff;
-        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-        color: #0f172a;
+        padding: 32px;
         box-sizing: border-box;
-        padding: 32px 36px;
-        border: 1px solid #e2e8f0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #0f172a;
       `;
 
       const isTeacherView = currentViewMode === 'teacher';
-      const entityHeading = isTeacherView ? 'BATCH / CLASS' : 'FACULTY';
-      
-      let viewTitle = '';
+      const targetEntity = isTeacherView
+        ? (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty Member')
+        : (db.classes.find(c => c.id === activeClassId)?.name || 'Class Batch');
+
+      const subtitleText = isTeacherView
+        ? `Consolidated Faculty Schedule &bull; ${targetEntity}`
+        : `Class Batch: ${targetEntity}`;
+
+      let rowsHtml = '';
 
       if (isTeacherView) {
-        const teacher = db.teachers.find(t => t.id === activeTeacherId);
-        viewTitle = `FACULTY: ${teacher ? teacher.name.toUpperCase() : 'ALL FACULTY'}`;
-      } else {
-        const cls = db.classes.find(c => c.id === activeClassId);
-        viewTitle = `BATCH: ${cls ? cls.name.toUpperCase() : 'GENERAL BATCH'}`;
-      }
-
-      // Generate Clean Rows from Database Directly (Eliminates Broken Unicode / Emojis)
-      let tableRowsHtml = '';
-
-      if (isTeacherView) {
+        // Collect teacher lectures across all batches
         const daySchedule = db.dateSchedules[activeDate] || {};
         const teacherSlots = [];
 
         db.classes.forEach(cls => {
           const clsDay = daySchedule[cls.id];
           if (!clsDay) return;
-          (clsDay.slots || []).forEach(slot => {
-            const assign = (clsDay.assignments || {})[slot.id];
+          const slots = clsDay.slots || [];
+          const assigns = clsDay.assignments || {};
+          slots.forEach(slot => {
+            const assign = assigns[slot.id];
             if (assign && assign.teacherId === activeTeacherId) {
               teacherSlots.push({
                 slot,
@@ -1673,69 +1691,65 @@
         teacherSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
 
         if (teacherSlots.length === 0) {
-          tableRowsHtml = `
+          rowsHtml = `
             <tr>
-              <td colspan="4" style="text-align: center; padding: 36px; color: #64748b; font-size: 14px; font-weight: 600;">
-                No lectures scheduled for this faculty member on this date.
+              <td colspan="4" style="padding: 24px; text-align: center; color: #64748b; font-weight: 600;">
+                No lectures assigned on this date.
               </td>
             </tr>
           `;
         } else {
-          tableRowsHtml = teacherSlots.map((item, idx) => {
-            const timeStr = formatSlotRange(item.slot.start, item.slot.end);
-            const isStudy = item.slot.type === 'study';
-            const bgRow = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
-            return `
-              <tr style="background-color: ${bgRow}; border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #0f172a; white-space: nowrap;">
-                  ${timeStr}
-                </td>
-                <td style="padding: 14px 16px; text-align: center;">
-                  <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; ${isStudy ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
-                    ${isStudy ? 'STUDY' : 'LECTURE'}
-                  </span>
-                </td>
-                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #1d4ed8;">
-                  ${item.batchName}
-                </td>
-                <td style="padding: 14px 16px; font-weight: 600; font-size: 13px; color: #334155;">
-                  ${item.subject}
-                </td>
-              </tr>
-            `;
-          }).join('');
+          rowsHtml = teacherSlots.map(item => `
+            <tr style="border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+              <td style="padding: 14px 12px; font-weight: 800; color: #0f172a; white-space: nowrap; width: 210px;">
+                ${formatSlotRange(item.slot.start, item.slot.end)}
+              </td>
+              <td style="padding: 14px 12px; width: 140px;">
+                <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800; text-transform: uppercase; ${item.slot.type === 'study' ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
+                  ${item.slot.type === 'study' ? 'STUDY' : 'LECTURE'}
+                </span>
+              </td>
+              <td style="padding: 14px 12px; font-weight: 700; color: #1d4ed8;">
+                ${item.batchName}
+              </td>
+              <td style="padding: 14px 12px; font-weight: 700; color: #1e293b;">
+                ${item.subject}
+              </td>
+            </tr>
+          `).join('');
         }
       } else {
+        // Class-wise view: Read directly from isolated date schedule
         const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
         const slots = dailyData.slots || [];
-        const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
         const assigns = dailyData.assignments || {};
 
-        if (sortedSlots.length === 0) {
-          tableRowsHtml = `
+        if (slots.length === 0) {
+          rowsHtml = `
             <tr>
-              <td colspan="4" style="text-align: center; padding: 36px; color: #64748b; font-size: 14px; font-weight: 600;">
-                No slots configured for this batch on this date.
+              <td colspan="4" style="padding: 24px; text-align: center; color: #64748b; font-weight: 600;">
+                No time slots scheduled for this batch.
               </td>
             </tr>
           `;
         } else {
-          tableRowsHtml = sortedSlots.map((slot, idx) => {
-            const timeStr = formatSlotRange(slot.start, slot.end);
+          const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+          rowsHtml = sortedSlots.map(slot => {
+            const timeFormatted = formatSlotRange(slot.start, slot.end);
 
             if (slot.type === 'recess') {
               return `
-                <tr style="background-color: #fefce8; border-bottom: 1px solid #fef08a; border-top: 1px solid #fef08a;">
-                  <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #854d0e; white-space: nowrap;">
-                    ${timeStr}
+                <tr style="background-color: #fefce8; border-top: 1px solid #fef08a; border-bottom: 1px solid #fef08a; font-size: 13px;">
+                  <td style="padding: 14px 12px; font-weight: 800; color: #854d0e; white-space: nowrap; width: 210px;">
+                    ${timeFormatted}
                   </td>
-                  <td style="padding: 14px 16px; text-align: center;">
-                    <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 900; letter-spacing: 0.05em; background: #fef08a; color: #713f12;">
-                      RECESS
+                  <td style="padding: 14px 12px; width: 140px;">
+                    <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 10px; font-weight: 900; text-transform: uppercase; background: #fef08a; color: #713f12; border: 1px solid #fde047;">
+                      RECESS BREAK
                     </span>
                   </td>
-                  <td colspan="2" style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #854d0e; font-style: italic;">
-                    ${slot.label || 'Tea & Interval Break'}
+                  <td colspan="2" style="padding: 14px 12px; font-weight: 800; color: #713f12; font-style: italic;">
+                    ${slot.label || 'Tea / Refreshment Break'}
                   </td>
                 </tr>
               `;
@@ -1746,22 +1760,21 @@
             const teacherName = teacherObj ? teacherObj.name : '—';
             const subjectName = currentAssign.subject || (teacherObj ? 'General Session' : '—');
             const isStudy = slot.type === 'study';
-            const bgRow = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
 
             return `
-              <tr style="background-color: ${bgRow}; border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: #0f172a; white-space: nowrap;">
-                  ${timeStr}
+              <tr style="border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+                <td style="padding: 14px 12px; font-weight: 800; color: #0f172a; white-space: nowrap; width: 210px;">
+                  ${timeFormatted}
                 </td>
-                <td style="padding: 14px 16px; text-align: center;">
-                  <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; ${isStudy ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
+                <td style="padding: 14px 12px; width: 140px;">
+                  <span style="display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 10px; font-weight: 800; text-transform: uppercase; ${isStudy ? 'background: #f3e8ff; color: #6b21a8;' : 'background: #dbeafe; color: #1e40af;'}">
                     ${isStudy ? 'STUDY' : 'LECTURE'}
                   </span>
                 </td>
-                <td style="padding: 14px 16px; font-weight: 700; font-size: 13px; color: ${teacherObj ? '#1e293b' : '#94a3b8'};">
+                <td style="padding: 14px 12px; font-weight: 700; color: #0f172a;">
                   ${teacherName}
                 </td>
-                <td style="padding: 14px 16px; font-weight: 600; font-size: 13px; color: ${currentAssign.subject ? '#334155' : '#94a3b8'};">
+                <td style="padding: 14px 12px; font-weight: 700; color: #1e293b;">
                   ${subjectName}
                 </td>
               </tr>
@@ -1771,69 +1784,63 @@
       }
 
       wrapper.innerHTML = `
-        <!-- Top Institutional Header -->
-        <div style="border-bottom: 3px solid #1e3a8a; padding-bottom: 18px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #1d4ed8, #0f172a); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #facc15; font-size: 22px; font-weight: 900; box-shadow: 0 4px 10px rgba(29, 78, 216, 0.25);">
-                S30
-              </div>
-              <div>
-                <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: #0f172a; text-transform: uppercase;">
-                  SUPER 30 ACADEMY, KARAD
-                </h1>
-                <p style="margin: 3px 0 0 0; font-size: 12px; font-weight: 800; color: #2563eb; letter-spacing: 0.06em; text-transform: uppercase;">
-                  JEE &bull; NEET &bull; MHT-CET &bull; FOUNDATION
-                </p>
-              </div>
+        <!-- Academy Letterhead Header -->
+        <div style="border-bottom: 2px solid #1e3a8a; padding-bottom: 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 52px; height: 52px; background: linear-gradient(135deg, #1d4ed8, #0f172a); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #facc15; font-size: 20px; font-weight: 900; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              S30
             </div>
-
-            <div style="text-align: right;">
-              <div style="display: inline-block; padding: 4px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 11px; font-weight: 800; color: #1e40af; text-transform: uppercase; letter-spacing: 0.05em;">
-                OFFICIAL TIMETABLE
-              </div>
-              <div style="margin-top: 5px; font-size: 12px; font-weight: 700; color: #475569;">
-                Date: <span style="color: #0f172a; font-weight: 800;">${getPrettyDate(activeDate)}</span>
-              </div>
+            <div>
+              <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: -0.025em; line-height: 1.2;">
+                SUPER 30 ACADEMY, KARAD
+              </h1>
+              <p style="margin: 2px 0 0 0; font-size: 12px; font-weight: 800; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em;">
+                JEE &bull; NEET &bull; MHT-CET &bull; Created by Ram Sir
+              </p>
             </div>
           </div>
-
-          <!-- Batch & Subtitle Strip -->
-          <div style="margin-top: 14px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-size: 13px; font-weight: 800; color: #1e3a8a;">
-              ${viewTitle}
+          <div style="text-align: right;">
+            <div style="display: inline-block; padding: 4px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 9999px; font-size: 11px; font-weight: 800; color: #1e40af; text-transform: uppercase;">
+              ${isTeacherView ? 'Teacher Roster' : 'Official Timetable'}
             </div>
-            <div style="font-size: 11px; font-weight: 700; color: #64748b;">
-              Created by <span style="color: #0f172a; font-weight: 800;">Ram Sir</span>
+            <div style="margin-top: 4px; font-size: 12px; font-weight: 700; color: #475569;">
+              ${getPrettyDate(activeDate)}
             </div>
           </div>
         </div>
 
-        <!-- Crisp Grid Table -->
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; border-radius: 12px; overflow: hidden; border: 1px solid #cbd5e1;">
+        <!-- Details Bar -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; font-weight: 800; color: #1e293b;">
+            ${subtitleText}
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #64748b;">
+            Karad Center &bull; Academic Schedule
+          </div>
+        </div>
+
+        <!-- Timetable Table -->
+        <table style="width: 100%; border-collapse: collapse; text-align: left; background: #ffffff;">
           <thead>
-            <tr style="background: linear-gradient(135deg, #1e3a8a, #0f172a); color: #ffffff;">
-              <th style="width: 195px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">TIME</th>
-              <th style="width: 110px; padding: 12px 16px; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">SESSION</th>
-              <th style="width: 215px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">${entityHeading}</th>
-              <th style="width: 230px; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">SUBJECT</th>
+            <tr style="background: linear-gradient(135deg, #1d4ed8, #0f172a); color: #ffffff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800;">
+              <th style="padding: 12px; width: 210px; border-top-left-radius: 8px;">Time</th>
+              <th style="padding: 12px; width: 140px;">Session</th>
+              <th style="padding: 12px;">${isTeacherView ? 'Batch / Class' : 'Teacher'}</th>
+              <th style="padding: 12px; border-top-right-radius: 8px;">Subject</th>
             </tr>
           </thead>
           <tbody>
-            ${tableRowsHtml}
+            ${rowsHtml}
           </tbody>
         </table>
 
-        <!-- Official Seal / Footer Note -->
-        <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #64748b;">
+        <!-- Certificate & Quality Footer -->
+        <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b;">
           <div>
-            <span style="font-weight: 800; color: #1e3a8a;">SUPER 30 ACADEMY</span> &bull; Karad Academic Branch
+            <span style="font-weight: 800; color: #1e40af;">SUPER 30 ACADEMY</span> &bull; Karad Branch &bull; Strive for Rank 1
           </div>
-          <div style="font-weight: 700; color: #059669; display: flex; align-items: center; gap: 4px;">
-            &#10003; Verified Academic Schedule
-          </div>
-          <div>
-            Mentor: <span style="font-weight: 800; color: #0f172a;">Ram Sir</span>
+          <div style="font-weight: 800; color: #0f172a;">
+            Verified &bull; Created by Ram Sir
           </div>
         </div>
       `;
@@ -1844,33 +1851,29 @@
     async function downloadTimetablePNG() {
       const exportButtons = document.querySelectorAll('[onclick="downloadTimetablePNG()"]');
       exportButtons.forEach(btn => { btn.disabled = true; btn.classList.add('opacity-60'); });
-      showToast('Rendering high-definition timetable image...', 'info');
+      showToast('Rendering high-resolution timetable...', 'info');
 
-      let workerEl = null;
+      let exportWrapper = null;
 
       try {
         const renderCanvas = await ensureHtml2Canvas();
         if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-        // Build pristine, un-truncated layout directly from data
-        workerEl = buildExportDOM();
-        document.body.appendChild(workerEl);
+        // Build clean 850px container off-screen
+        exportWrapper = buildExportDOM();
+        document.body.appendChild(exportWrapper);
 
-        // Allow layout calculation to settle
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-        const canvas = await renderCanvas(workerEl, {
-          scale: 2, // 2x crisp retina resolution
+        // Render at 2x device scale for high-definition print quality
+        const canvas = await renderCanvas(exportWrapper, {
+          scale: 2,
           backgroundColor: '#ffffff',
           useCORS: true,
-          allowTaint: false,
           logging: false,
-          width: 820,
-          windowWidth: 820
+          width: 850
         });
 
         const blob = await new Promise((resolve, reject) => {
-          canvas.toBlob(res => res ? resolve(res) : reject(new Error('Failed to encode PNG image')), 'image/png');
+          canvas.toBlob(b => (b ? resolve(b) : reject(new Error('Canvas image rendering failed'))), 'image/png');
         });
 
         if (latestExportUrl) URL.revokeObjectURL(latestExportUrl);
@@ -1882,48 +1885,100 @@
         latestExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
 
         const previewImg = document.getElementById('exportPreviewImg');
-        const modalAnchor = document.getElementById('exportDownloadAnchor');
         previewImg.src = latestExportUrl;
-        modalAnchor.href = latestExportUrl;
-        modalAnchor.download = latestExportFilename;
-        document.getElementById('exportShareBtn').classList.toggle('hidden', !(navigator.share && navigator.canShare));
-        document.getElementById('exportHelpText').textContent = 'Image ready: ' + latestExportFilename + '. Tap Save Image to download.';
+
+        // Automatically trigger save/share immediately on mobile
         openModal('modalExportPreview');
-        showToast('Image generated with crisp borders!', 'success');
+        showToast('Timetable image ready! Tap Save Image.', 'success');
       } catch (err) {
-        console.error('Timetable image export failed:', err);
-        showToast(err && err.message ? err.message : 'Image export failed. Try using Print / Save as PDF.', 'error');
+        console.error('Image export failed:', err);
+        showToast(err && err.message ? err.message : 'Export failed. Please try Print / PDF.', 'error');
       } finally {
-        if (workerEl && workerEl.parentNode) {
-          workerEl.parentNode.removeChild(workerEl);
+        if (exportWrapper && exportWrapper.parentNode) {
+          exportWrapper.parentNode.removeChild(exportWrapper);
         }
         exportButtons.forEach(btn => { btn.disabled = false; btn.classList.remove('opacity-60'); });
       }
     }
 
-    function openExportImage() {
-      if (!latestExportUrl) return showToast('Create the timetable image first.', 'error');
-      const imageWindow = window.open('', '_blank');
-      if (!imageWindow) {
-        showToast('Pop-up blocked. Use the image preview and long-press the picture.', 'info');
+    /* -------------------------------------------------------------
+       ROBUST MOBILE & DESKTOP IMAGE SAVER / SHARER
+       ------------------------------------------------------------- */
+    async function saveOrShareImage() {
+      if (!latestExportBlob) {
+        showToast('Please generate the timetable image first', 'error');
         return;
       }
-      imageWindow.document.write('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Save Timetable</title><style>body{margin:0;padding:12px;background:#111827;color:white;font:16px Arial;text-align:center}img{display:block;width:100%;height:auto;margin:12px auto}p{line-height:1.5}</style></head><body><p>Long-press the timetable image and choose “Download image” or “Save image”.</p><img id="timetableImage" alt="SUPER 30 timetable"></body></html>');
-      imageWindow.document.close();
-      imageWindow.document.getElementById('timetableImage').src = latestExportUrl;
+
+      const fileName = latestExportFilename || 'SUPER30_Timetable.png';
+      const file = new File([latestExportBlob], fileName, { type: 'image/png' });
+
+      // 1. Android Mobile Web Share API (Triggers system bottom sheet: Save to Photos, Files, WhatsApp)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'SUPER 30 Academy Timetable',
+            text: `Timetable for ${getPrettyDate(activeDate)} | SUPER 30 ACADEMY, KARAD`
+          });
+          showToast('Timetable saved/shared successfully!', 'success');
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return; // User closed picker
+          console.warn('Web Share failed, attempting bridge/download...', err);
+        }
+      }
+
+      // 2. Native Android WebView JavascriptInterface bridge (if wrapper provides saveImageBase64)
+      if (window.AndroidInterface && typeof window.AndroidInterface.saveImageBase64 === 'function') {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          const base64data = reader.result.split(',')[1];
+          window.AndroidInterface.saveImageBase64(base64data, fileName);
+        };
+        reader.readAsDataURL(latestExportBlob);
+        showToast('Image saved to device!', 'success');
+        return;
+      }
+
+      // 3. Fallback for Desktop Browsers: Direct anchor download
+      try {
+        const a = document.createElement('a');
+        a.href = latestExportUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('Image downloaded!', 'success');
+      } catch (e) {
+        showToast('Tip: Long-press the image to save directly to your gallery.', 'info');
+      }
     }
 
-    async function shareExportImage() {
-      if (!latestExportBlob) return showToast('Create the timetable image first.', 'error');
-      try {
-        const file = new File([latestExportBlob], latestExportFilename, { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: 'SUPER 30 Academy Timetable' });
-        } else {
-          showToast('Image sharing is not supported in this browser. Use Save Image.', 'info');
+    // Direct Share Button handler
+    async function shareNativeImage() {
+      if (!latestExportBlob) {
+        showToast('Please generate the timetable image first', 'error');
+        return;
+      }
+
+      const fileName = latestExportFilename || 'SUPER30_Timetable.png';
+      const file = new File([latestExportBlob], fileName, { type: 'image/png' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'SUPER 30 Academy Timetable',
+            text: `SUPER 30 ACADEMY, KARAD Timetable for ${getPrettyDate(activeDate)}`
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            showToast('Unable to share. Use Save Image instead.', 'error');
+          }
         }
-      } catch (err) {
-        if (err.name !== 'AbortError') showToast('Unable to share image. Please use Save Image.', 'error');
+      } else {
+        shareViaWhatsApp();
       }
     }
 
