@@ -1,1752 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SUPER 30 ACADEMY, KARAD | Smart Timetable App</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            display: ['Outfit', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    :root {
-      --bg-body: #e2e8f0;
-    }
-
-    body {
-      background-color: var(--bg-body);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      transition: background-color 0.3s ease;
-      -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
-    }
-
-    /* Fixed mobile smartphone container shell */
-    .mobile-shell {
-      width: 100%;
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
-      min-height: 100dvh;
-      box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.25);
-    }
-
-    .mobile-select {
-      max-width: 100%;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    /* Enables native long-press save menu on mobile */
-    .saveable-img {
-      -webkit-touch-callout: default !important;
-      -webkit-user-select: auto !important;
-      user-select: auto !important;
-      touch-action: manipulation !important;
-      pointer-events: auto !important;
-    }
-
-    /* Custom Table Gradient Themes */
-    .table-modern thead tr {
-      background: linear-gradient(135deg, #1d4ed8, #0f172a);
-      color: #ffffff;
-    }
-    .table-gold thead tr {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #facc15;
-      border-bottom: 2px solid #eab308;
-    }
-    .table-clean thead tr {
-      background-color: #f1f5f9;
-      color: #1e293b;
-      border-bottom: 2px solid #cbd5e1;
-    }
-    .table-aurora thead tr {
-      background: linear-gradient(135deg, #097969, #0ea5e9, #6366f1);
-      color: #ffffff;
-    }
-    .table-sunset thead tr {
-      background: linear-gradient(135deg, #f43f5e, #f97316, #eab308);
-      color: #ffffff;
-    }
-    .table-cyberpunk thead tr {
-      background: linear-gradient(135deg, #a21caf, #3b82f6, #06b6d4);
-      color: #ffffff;
-    }
-    .table-cosmic thead tr {
-      background: linear-gradient(135deg, #312e81, #701a75, #431407);
-      color: #fde047;
-      border-bottom: 2px solid #f59e0b;
-    }
-    .table-emerald-glow thead tr {
-      background: linear-gradient(135deg, #064e3b, #047857, #10b981);
-      color: #ffffff;
-    }
-
-    body[data-theme="blue"] { --bg-body: #f8fafc; }
-    body[data-theme="aurora"] {
-      --bg-body: #f0fdfa;
-      background: radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.08) 0%, rgba(99, 102, 241, 0.06) 40%, #f0fdfa 85%);
-    }
-    body[data-theme="sunset"] {
-      --bg-body: #fff7ed;
-      background: radial-gradient(circle at top left, rgba(244, 63, 94, 0.08) 0%, rgba(249, 115, 22, 0.06) 50%, #fff7ed 90%);
-    }
-    body[data-theme="cyberpunk"] {
-      --bg-body: #faf5ff;
-      background: linear-gradient(135deg, rgba(217, 70, 239, 0.08), rgba(59, 130, 246, 0.08), #faf5ff);
-    }
-    body[data-theme="emerald-glow"] {
-      --bg-body: #f0fdf4;
-      background: radial-gradient(ellipse at bottom left, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.03) 60%, #f0fdf4 100%);
-    }
-    body[data-theme="cosmic"] {
-      --bg-body: #050811;
-      background: radial-gradient(circle at 80% 20%, rgba(112, 26, 117, 0.25) 0%, rgba(49, 46, 129, 0.3) 45%, #070b14 100%);
-      color: #e2e8f0;
-    }
-
-    @media print {
-      body * { visibility: hidden; }
-      #print-area, #print-area * { visibility: visible; }
-      #print-area {
-        position: absolute; left: 0; top: 0; width: 100% !important; margin: 0 !important; padding: 0 !important;
-      }
-      .no-print { display: none !important; }
-    }
-  </style>
-</head>
-<body data-theme="blue" class="text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
-
-  <!-- ============================================================== -->
-  <!-- 1. INTRO SPLASH OVERLAY -->
-  <!-- ============================================================== -->
-  <div id="welcomeSplash" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white p-6 transition-all duration-500 cursor-pointer" onclick="enterAppNow()">
-    <div class="relative max-w-md w-full text-center flex flex-col items-center">
-      <div class="w-24 h-24 mb-4 rounded-3xl bg-gradient-to-tr from-amber-400 via-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
-        <div class="w-full h-full bg-slate-950 rounded-[22px] flex flex-col items-center justify-center p-2">
-          <i data-lucide="graduation-cap" class="w-10 h-10 text-amber-400"></i>
-          <span class="text-[10px] font-black tracking-widest text-blue-200 mt-1 uppercase">SUPER 30</span>
-        </div>
-      </div>
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-xs font-semibold mb-2">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> Smart Academy Timetable
-      </div>
-      <h1 class="text-2xl sm:text-3xl font-black font-display text-white mb-1">
-        SUPER 30 ACADEMY
-      </h1>
-      <p class="text-xs font-extrabold text-amber-400 tracking-widest uppercase mb-4">KARAD &bull; JEE &bull; NEET &bull; MHT-CET</p>
-
-      <div class="py-2 px-4 rounded-xl bg-white/5 border border-white/10 mb-6 flex items-center justify-center gap-2">
-        <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
-        <span class="text-xs font-bold text-amber-300">Created by Ram Sir</span>
-      </div>
-
-      <button type="button" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg flex items-center gap-2">
-        <span>Open Timetable Portal</span>
-        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </button>
-      <span class="mt-3 text-[11px] text-slate-400">Click anywhere to start</span>
-    </div>
-  </div>
-
-  <!-- ============================================================== -->
-  <!-- 2. NAVBAR & SHELL -->
-  <!-- ============================================================== -->
-  <div class="mobile-shell bg-slate-50/95 flex flex-col relative border-x border-slate-200">
-    <header class="sticky top-0 z-40 bg-white/95 border-b border-slate-200 backdrop-blur-md">
-      <div class="w-full px-3">
-        <div class="flex items-center justify-between h-14">
-
-          <div class="flex items-center gap-2 min-w-0">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-800 flex items-center justify-center text-white shadow-md flex-shrink-0">
-              <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-300"></i>
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-black tracking-tight text-slate-900 font-display truncate">
-                  SUPER 30 ACADEMY
-                </span>
-                <span class="px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-900 rounded border border-amber-300/60 uppercase flex-shrink-0">
-                  Karad
-                </span>
-              </div>
-              <p class="text-[10px] text-blue-600 font-bold flex items-center gap-1 truncate">
-                <span>Created by Ram Sir</span>
-                <span class="text-slate-300">&bull;</span>
-                <span class="text-[10px] text-slate-500 font-normal" id="headerLiveClock">--:--</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button type="button" onclick="downloadTimetablePNG()" class="px-2.5 py-1.5 text-[11px] font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-1 shadow-sm">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>PNG</span>
-            </button>
-            <button type="button" onclick="shareViaWhatsApp()" class="p-1.5 text-[11px] font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 shadow-sm" title="Share via WhatsApp">
-              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
-
-        <nav class="flex space-x-1 overflow-x-auto pb-1.5 border-t border-slate-100">
-          <button type="button" onclick="switchTab('edit-timetable')" id="tab-edit-timetable" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 whitespace-nowrap bg-blue-50 text-blue-700 flex-shrink-0">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Timetable
-          </button>
-          <button type="button" onclick="switchTab('view-export')" id="tab-view-export" class="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
-            <i data-lucide="eye" class="w-3.5 h-3.5"></i> View & Export PNG
-          </button>
-          <button type="button" onclick="switchTab('settings')" id="tab-settings" class="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0">
-            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Faculty & Batches
-          </button>
-        </nav>
-      </div>
-    </header>
-
-    <!-- ============================================================== -->
-    <!-- 3. MAIN CONTENT CONTAINER -->
-    <!-- ============================================================== -->
-    <main class="flex-1 w-full p-2.5 space-y-3.5">
-
-      <!-- TAB 1: EDIT TIMETABLE -->
-      <div id="section-edit-timetable" class="space-y-4">
-        <div class="bg-white p-3.5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-          <div class="flex flex-col gap-2.5">
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Batch / Class</label>
-                <select id="editClassSelect" onchange="onEditClassChange(this.value)" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"></select>
-              </div>
-
-              <div>
-                <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Color Palette</label>
-                <select id="activeTablePreset" onchange="changeTableStyle(this.value)" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-extrabold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="modern">Royal Blue Gradient</option>
-                  <option value="aurora">Aurora Borealis</option>
-                  <option value="sunset">Solar Sunset</option>
-                  <option value="cyberpunk">Neon Cyberpunk</option>
-                  <option value="emerald-glow">Emerald Glow</option>
-                  <option value="cosmic">Cosmic Nebula</option>
-                  <option value="gold">Academic Navy & Gold</option>
-                  <option value="clean">Minimalist Slate</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Schedule Date</label>
-              <div class="flex items-center gap-1.5">
-                <input type="date" id="activeDateInput" onchange="onDateChange(this.value)" class="flex-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="button" onclick="setTodayDate()" class="px-2.5 py-1.5 text-[11px] font-bold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700">Today</button>
-                <button type="button" onclick="setTomorrowDate()" class="px-2.5 py-1.5 text-[11px] font-bold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700">Tmrw</button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-1.5 pt-1">
-              <button type="button" onclick="openAddNewSlotModal()" class="py-1.5 px-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-sm">
-                <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                <span>Add Slot</span>
-              </button>
-              <button type="button" onclick="openCopyDateModal()" class="py-1.5 px-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 shadow-sm">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                <span>Copy Day</span>
-              </button>
-              <button type="button" onclick="clearAllRowsForCurrentDay()" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold rounded-xl text-[11px] flex items-center justify-center gap-1">
-                <i data-lucide="eraser" class="w-3.5 h-3.5"></i>
-                <span>Clear</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[10px] text-slate-500">
-            <span class="inline-flex items-center gap-1 font-bold text-emerald-600">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Available
-            </span>
-            <span class="inline-flex items-center gap-1 font-bold text-rose-600">
-              <span class="w-2 h-2 rounded-full bg-rose-500"></span> Busy in Another Batch
-            </span>
-          </div>
-        </div>
-
-        <!-- TIMETABLE LIST VIEW -->
-        <div class="w-full bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-3 sm:p-4">
-          <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100">
-            <div>
-              <h2 class="text-xs font-black text-slate-900 uppercase tracking-wide truncate max-w-[200px]" id="editHeaderBatchName">Batch Schedule</h2>
-              <p class="text-[11px] text-blue-600 font-bold" id="editHeaderDateDisplay">Date: --</p>
-            </div>
-            <button type="button" onclick="switchTab('view-export')" class="px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 text-[11px] font-bold hover:bg-blue-100 flex items-center gap-1 border border-blue-200">
-              <i data-lucide="eye" class="w-3 h-3"></i> Export
-            </button>
-          </div>
-
-          <div class="overflow-x-auto -mx-1">
-            <table id="mainTimetable" class="w-full text-left border-collapse table-modern">
-              <thead>
-                <tr class="text-[10px] uppercase tracking-wider font-extrabold">
-                  <th class="py-2 px-2.5 rounded-l-xl w-28">Slot</th>
-                  <th class="py-2 px-1.5 w-14">Type</th>
-                  <th class="py-2 px-2">Faculty & Subject</th>
-                  <th class="py-2 px-1 text-right rounded-r-xl w-14 no-print">Act</th>
-                </tr>
-              </thead>
-              <tbody id="editTableBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
-            </table>
-          </div>
-
-          <div id="editEmptyNotice" class="hidden py-8 text-center">
-            <i data-lucide="calendar-x" class="w-8 h-8 mx-auto text-slate-300 mb-1"></i>
-            <h4 class="text-xs font-bold text-slate-700">No time slots for this batch</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5 mb-2.5">Add a slot to start scheduling.</p>
-            <button type="button" onclick="openAddNewSlotModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold">
-              + Add Time Slot
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: VIEW & EXPORT TIMETABLE -->
-      <div id="section-view-export" class="hidden space-y-4">
-        <div class="bg-white p-3.5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-          <div class="flex flex-col gap-2.5">
-            <div>
-              <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">View Mode</label>
-              <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200 gap-1">
-                <button type="button" id="viewFilterClassBtn" onclick="setViewMode('class')" class="py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-sm">
-                  <i data-lucide="school" class="w-3.5 h-3.5"></i> Class-wise
-                </button>
-                <button type="button" id="viewFilterTeacherBtn" onclick="setViewMode('teacher')" class="py-1 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1 text-slate-600">
-                  <i data-lucide="user-check" class="w-3.5 h-3.5"></i> Teacher-wise
-                </button>
-              </div>
-            </div>
-
-            <div id="viewClassPickerWrapper">
-              <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Select Batch</label>
-              <select id="viewClassSelect" onchange="onViewClassChange(this.value)" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 outline-none"></select>
-            </div>
-
-            <div id="viewTeacherPickerWrapper" class="hidden">
-              <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Select Faculty</label>
-              <select id="viewTeacherSelect" onchange="onViewTeacherChange(this.value)" class="w-full px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-xs font-bold text-amber-900 outline-none"></select>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="downloadTimetablePNG()" class="py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/20">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                <span>Save PNG</span>
-              </button>
-              <button type="button" onclick="window.print()" class="py-2 px-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5">
-                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                <span>Print</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- RENDERABLE EXPORT CARD -->
-        <div id="print-area" class="w-full bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div id="renderableContainer" class="p-4 bg-white">
-            <div class="pb-2.5 mb-2.5 border-b-2 border-slate-200 flex items-center justify-between">
-              <div class="flex items-center gap-2.5">
-                <div class="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center text-amber-300 font-black text-sm shadow-sm flex-shrink-0">
-                  S30
-                </div>
-                <div>
-                  <h1 class="text-xs font-black text-slate-900 uppercase font-display tracking-tight">SUPER 30 ACADEMY</h1>
-                  <p class="text-[10px] text-blue-700 font-extrabold uppercase">KARAD &bull; Ram Sir</p>
-                </div>
-              </div>
-
-              <div class="text-right">
-                <span id="viewDisplayBadge" class="inline-block px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-100 text-blue-800 border border-blue-200 uppercase truncate max-w-[130px]">
-                  Class
-                </span>
-                <div class="text-[10px] font-bold text-slate-600 mt-0.5" id="viewDisplaySubtext">Date: --</div>
-              </div>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table id="viewTimetable" class="w-full text-left border-collapse table-modern">
-                <thead>
-                  <tr class="text-[10px] uppercase tracking-wider font-extrabold">
-                    <th class="py-2 px-2.5 rounded-l-xl w-32">Time Slot</th>
-                    <th class="py-2 px-2" id="viewTableCol2">Teacher</th>
-                    <th class="py-2 px-2 rounded-r-xl" id="viewTableCol3">Subject</th>
-                  </tr>
-                </thead>
-                <tbody id="viewTableBody" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
-              </table>
-            </div>
-
-            <div class="mt-4 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500">
-              <span>JEE &bull; NEET &bull; MHT-CET</span>
-              <span class="font-extrabold text-blue-700">Ram Sir Timetable</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: SETTINGS & MASTERS -->
-      <div id="section-settings" class="hidden space-y-4">
-        <div class="bg-white p-4 rounded-3xl border border-slate-200">
-          <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-            <i data-lucide="sliders" class="w-4 h-4 text-blue-600"></i> Academy Masters
-          </h2>
-          <p class="text-[11px] text-slate-500 mt-0.5">Manage Batches, Teachers, and Subjects.</p>
-        </div>
-
-        <div class="space-y-4">
-          <!-- Batches -->
-          <div class="bg-white rounded-3xl p-4 border border-slate-200">
-            <div class="flex items-center justify-between mb-2.5">
-              <h3 class="text-xs font-black uppercase text-slate-600">Batches / Classes</h3>
-              <span class="text-xs bg-slate-100 px-2 py-0.5 rounded-lg font-bold" id="badgeClassesCount">0</span>
-            </div>
-            <div class="flex gap-1.5 mb-2.5">
-              <input type="text" id="newBatchNameInput" placeholder="Class name..." class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none">
-              <button type="button" onclick="handleAddBatch()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold">Add</button>
-            </div>
-            <div id="settBatchList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
-          </div>
-
-          <!-- Faculty -->
-          <div class="bg-white rounded-3xl p-4 border border-slate-200">
-            <div class="flex items-center justify-between mb-2.5">
-              <h3 class="text-xs font-black uppercase text-slate-600">Faculty Members</h3>
-              <span class="text-xs bg-slate-100 px-2 py-0.5 rounded-lg font-bold" id="badgeTeachersCount">0</span>
-            </div>
-            <div class="space-y-1.5 mb-2.5">
-              <input type="text" id="newTeacherNameInput" placeholder="Teacher name..." class="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none">
-              <div class="flex gap-1.5">
-                <input type="text" id="newTeacherSubsInput" placeholder="Subjects (comma separated)" class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none">
-                <button type="button" onclick="handleAddFaculty()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold">Add</button>
-              </div>
-            </div>
-            <div id="settTeacherList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
-          </div>
-
-          <!-- Subjects -->
-          <div class="bg-white rounded-3xl p-4 border border-slate-200">
-            <div class="flex items-center justify-between mb-2.5">
-              <h3 class="text-xs font-black uppercase text-slate-600">Curriculum Subjects</h3>
-              <span class="text-xs bg-slate-100 px-2 py-0.5 rounded-lg font-bold" id="badgeSubsCount">0</span>
-            </div>
-            <div class="flex gap-1.5 mb-2.5">
-              <input type="text" id="newSubInput" placeholder="Subject name..." class="flex-1 px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none">
-              <button type="button" onclick="handleAddSubject()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold">Add</button>
-            </div>
-            <div id="settSubjectList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
-          </div>
-        </div>
-      </div>
-
-    </main>
-
-    <!-- MODAL: EDIT TIME SLOT -->
-    <div id="modalEditSlot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 hidden">
-      <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-            <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i> Edit Time Slot
-          </h3>
-          <button type="button" onclick="closeModal('modalEditSlot')" class="text-slate-400 hover:text-slate-600 p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <form onsubmit="handleSaveEditedSlot(event)" class="mt-3 space-y-3 text-xs">
-          <input type="hidden" id="editSlotId">
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">Start Time</label>
-              <input type="time" id="editSlotStart" required class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">End Time</label>
-              <input type="time" id="editSlotEnd" required class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Category</label>
-            <select id="editSlotType" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-              <option value="lecture">Standard Lecture</option>
-              <option value="recess">Recess / Tea / Lunch Break</option>
-              <option value="study">Study / Doubt Session</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Custom Label (Optional)</label>
-            <input type="text" id="editSlotLabel" placeholder="e.g. Lunch Break, DPP Practice" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 outline-none">
-          </div>
-
-          <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
-            <button type="button" onclick="handleDeleteSlotFromModal()" class="px-3 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl font-bold">
-              Delete
-            </button>
-            <div class="flex items-center gap-1.5">
-              <button type="button" onclick="closeModal('modalEditSlot')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-              <button type="submit" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md">Save</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL: ADD NEW SLOT -->
-    <div id="modalAddSlot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 hidden">
-      <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-            <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i> Add Time Slot
-          </h3>
-          <button type="button" onclick="closeModal('modalAddSlot')" class="text-slate-400 hover:text-slate-600 p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <form onsubmit="handleCreateNewSlot(event)" class="mt-3 space-y-3 text-xs">
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">Start Time</label>
-              <input type="time" id="addSlotStart" value="11:30" required class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">End Time</label>
-              <input type="time" id="addSlotEnd" value="12:30" required class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Category</label>
-            <select id="addSlotType" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-              <option value="lecture">Standard Lecture</option>
-              <option value="recess">Recess / Break</option>
-              <option value="study">Study Session</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Custom Label (Optional)</label>
-            <input type="text" id="addSlotLabel" placeholder="e.g. Lunch Break" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 outline-none">
-          </div>
-
-          <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
-            <button type="button" onclick="closeModal('modalAddSlot')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-            <button type="submit" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md">+ Add Slot</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL: COPY SCHEDULE -->
-    <div id="modalCopyDate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 hidden">
-      <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-            <i data-lucide="copy" class="w-4 h-4 text-amber-500"></i> Duplicate Day's Schedule
-          </h3>
-          <button type="button" onclick="closeModal('modalCopyDate')" class="text-slate-400 hover:text-slate-600 p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <div class="mt-3 space-y-3 text-xs">
-          <div>
-            <label class="block font-bold text-slate-600 mb-1">Target Batch</label>
-            <input type="text" id="copyClassName" readonly class="w-full px-2.5 py-1.5 rounded-xl bg-slate-100 font-bold text-slate-700">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">From Date</label>
-              <input type="date" id="copySourceDate" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-600 mb-1">To Target Date</label>
-              <input type="date" id="copyTargetDate" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
-            </div>
-          </div>
-
-          <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
-            <button type="button" onclick="closeModal('modalCopyDate')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-            <button type="button" onclick="executeCopySchedule()" class="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold rounded-xl shadow-md">Copy Schedule</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL: IMAGE EXPORT PREVIEW -->
-    <div id="modalExportPreview" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 hidden">
-      <div class="bg-white rounded-3xl max-w-sm w-full p-4 border border-slate-200 shadow-2xl relative flex flex-col max-h-[95vh]">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-              <i data-lucide="image" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <h3 class="text-xs font-extrabold text-slate-900 leading-tight">Timetable PNG Ready</h3>
-              <p class="text-[9px] text-slate-500" id="exportFilenameLabel">SUPER30_Timetable.png</p>
-            </div>
-          </div>
-          <button type="button" onclick="closeModal('modalExportPreview')" class="text-slate-400 hover:text-slate-600 p-1 rounded-xl">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
-        </div>
-
-        <div class="mt-2 p-2 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-950 space-y-1">
-          <div class="font-bold text-blue-800">Save options on mobile:</div>
-          <div>1. Tap <strong>Save PNG</strong> below to save/share to Photos.</div>
-          <div>2. Or <strong>press & hold the image below</strong> & choose <em>"Download image" / "Save image"</em>.</div>
-        </div>
-
-        <div class="mt-2 flex-1 overflow-y-auto rounded-2xl border border-slate-200 p-2 bg-slate-900/5 flex flex-col items-center justify-center min-h-[220px]">
-          <img id="exportPreviewImg" src="" alt="SUPER 30 Timetable" class="max-w-full h-auto rounded-xl shadow-lg border border-slate-200 saveable-img cursor-pointer" onclick="notifyLongPressHint()">
-          <span class="mt-1.5 text-[9px] text-slate-400 font-bold uppercase tracking-wider">Touch &amp; hold image to save</span>
-        </div>
-
-        <div class="mt-3 pt-2.5 border-t border-slate-100 flex flex-col gap-2">
-          <div class="grid grid-cols-2 gap-2 w-full">
-            <button type="button" onclick="triggerMobileSave()" class="w-full py-2 px-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1 text-xs transition">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>Save PNG</span>
-            </button>
-
-            <button type="button" onclick="shareImageDirectToWhatsApp()" class="w-full py-2 px-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-1 text-xs transition">
-              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-              <span>Share Image</span>
-            </button>
-          </div>
-
-          <button type="button" onclick="closeModal('modalExportPreview')" class="w-full py-1.5 text-slate-500 hover:text-slate-800 font-bold text-xs rounded-xl hover:bg-slate-100 transition">
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TOAST CONTAINER -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2 pointer-events-none"></div>
-
-  </div>
-
-  <!-- ============================================================== -->
-  <!-- 4. JAVASCRIPT APPLICATION CORE -->
-  <!-- ============================================================== -->
-  <script>
-    function safeCreateIcons() {
-      if (typeof window.lucide !== 'undefined' && typeof window.lucide.createIcons === 'function') {
-        try {
-          window.lucide.createIcons();
-        } catch (e) {
-          console.warn('Lucide icon warning:', e);
-        }
-      }
-    }
-
-    let splashDismissed = false;
-    window.enterAppNow = function() {
-      if (splashDismissed) return;
-      splashDismissed = true;
-      const splash = document.getElementById('welcomeSplash');
-      if (splash) {
-        splash.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
-        setTimeout(() => splash.remove(), 400);
-      }
-    };
-
-    const STORAGE_KEY = 'SUPER30_ACADEMY_KARAD_TIMETABLE_V8';
-
-    const defaultDatabase = {
-      tableStyle: 'modern',
-      theme: 'blue',
-      classes: [
-        {
-          id: 'c1',
-          name: 'Class 11 - JEE Advanced',
-          defaultSlots: [
-            { id: 's1', start: '08:00', end: '09:00', type: 'lecture', label: '' },
-            { id: 's2', start: '09:00', end: '10:00', type: 'lecture', label: '' },
-            { id: 's3', start: '10:00', end: '10:30', type: 'recess', label: 'Morning Tea Break' },
-            { id: 's4', start: '10:30', end: '11:30', type: 'lecture', label: '' },
-            { id: 's5', start: '11:30', end: '12:30', type: 'study', label: 'Self-Study & DPP Practice' }
-          ]
-        },
-        {
-          id: 'c2',
-          name: 'Class 12 - NEET Champions',
-          defaultSlots: [
-            { id: 's2_1', start: '08:00', end: '09:00', type: 'lecture', label: '' },
-            { id: 's2_2', start: '09:00', end: '10:00', type: 'lecture', label: '' },
-            { id: 's2_3', start: '10:00', end: '10:30', type: 'recess', label: 'Breakfast Interval' },
-            { id: 's2_4', start: '10:30', end: '11:30', type: 'lecture', label: '' }
-          ]
-        },
-        {
-          id: 'c3',
-          name: 'Class 12 - MHT-CET Rankers',
-          defaultSlots: [
-            { id: 's3_1', start: '08:00', end: '09:15', type: 'lecture', label: '' },
-            { id: 's3_2', start: '09:15', end: '10:30', type: 'lecture', label: '' },
-            { id: 's3_3', start: '10:30', end: '11:00', type: 'recess', label: 'Short Break' }
-          ]
-        }
-      ],
-      teachers: [
-        { id: 't1', name: 'Ram Sir', subjects: 'Advanced Mathematics, JEE Calculus' },
-        { id: 't2', name: 'Datta Sir', subjects: 'Physics Mechanics, Modern Physics' },
-        { id: 't3', name: 'Dr. Patil', subjects: 'Organic Chemistry, Inorganic Chemistry' },
-        { id: 't4', name: 'Prof. Kulkarni', subjects: 'Botany, Zoology' },
-        { id: 't5', name: 'Salunkhe Sir', subjects: 'Physical Chemistry' }
-      ],
-      subjects: [
-        { id: 'sub1', name: 'Advanced Mathematics' },
-        { id: 'sub2', name: 'Physics Mechanics' },
-        { id: 'sub3', name: 'Organic Chemistry' },
-        { id: 'sub4', name: 'Inorganic Chemistry' },
-        { id: 'sub5', name: 'Botany' },
-        { id: 'sub6', name: 'Zoology' },
-        { id: 'sub7', name: 'Physical Chemistry' }
-      ],
-      dateSchedules: {}
-    };
-
-    let db = {};
-    let activeDate = getTodayString();
-    let activeClassId = 'c1';
-    let activeTeacherId = 't1';
-    let currentViewMode = 'class';
-    let currentTab = 'edit-timetable';
-
-    function loadDatabase() {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          db = JSON.parse(stored);
-        } else {
-          db = JSON.parse(JSON.stringify(defaultDatabase));
-          seedInitialAssignments(db);
-          saveDatabase();
-        }
-      } catch (e) {
-        db = JSON.parse(JSON.stringify(defaultDatabase));
-        seedInitialAssignments(db);
-        saveDatabase();
-      }
-      if (!db.dateSchedules) db.dateSchedules = {};
-    }
-
-    function saveDatabase() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-      } catch (e) {
-        console.error('Storage error', e);
-      }
-    }
-
-    function getOrCreateDailySchedule(date, classId) {
-      if (!db.dateSchedules[date]) db.dateSchedules[date] = {};
-      if (!db.dateSchedules[date][classId]) {
-        const cls = db.classes.find(c => c.id === classId);
-        const templateSlots = (cls && cls.defaultSlots && cls.defaultSlots.length > 0) ? cls.defaultSlots : [];
-        db.dateSchedules[date][classId] = {
-          slots: JSON.parse(JSON.stringify(templateSlots)),
-          assignments: {}
-        };
-      }
-      return db.dateSchedules[date][classId];
-    }
-
-    function seedInitialAssignments(data) {
-      const today = getTodayString();
-      if (!data.dateSchedules) data.dateSchedules = {};
-      if (!data.dateSchedules[today]) data.dateSchedules[today] = {};
-      const c1 = data.classes.find(c => c.id === 'c1');
-      if (c1) {
-        data.dateSchedules[today]['c1'] = {
-          slots: JSON.parse(JSON.stringify(c1.defaultSlots)),
-          assignments: {
-            's1': { teacherId: 't1', subject: 'Advanced Mathematics' },
-            's2': { teacherId: 't2', subject: 'Physics Mechanics' },
-            's4': { teacherId: 't3', subject: 'Organic Chemistry' }
-          }
-        };
-      }
-    }
-
-    function getTodayString() { return formatDateToYMD(new Date()); }
-    function getTomorrowString() {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      return formatDateToYMD(d);
-    }
-    function formatDateToYMD(d) {
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }
-    function formatTime24to12(time24) {
-      if (!time24) return '';
-      const [hStr, mStr] = time24.split(':');
-      let h = parseInt(hStr, 10);
-      const m = mStr || '00';
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12;
-      return `${String(h).padStart(2, '0')}:${m} ${ampm}`;
-    }
-    function formatSlotRange(start, end) {
-      return `${formatTime24to12(start)} – ${formatTime24to12(end)}`;
-    }
-    function timeToMinutes(t) {
-      if (!t) return 0;
-      const [h, m] = t.split(':').map(Number);
-      return (h * 60) + (m || 0);
-    }
-    function getPrettyDate(ymd) {
-      if (!ymd) return '';
-      const [y, m, d] = ymd.split('-');
-      return new Date(y, m - 1, d).toLocaleDateString('en-IN', {
-        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-      });
-    }
-
-    function setTodayDate() { syncDate(getTodayString()); }
-    function setTomorrowDate() { syncDate(getTomorrowString()); }
-    function syncDate(newDate) {
-      activeDate = newDate;
-      const editDateInput = document.getElementById('activeDateInput');
-      if (editDateInput) editDateInput.value = newDate;
-      renderEditTimetable();
-      renderExportView();
-      showToast(`Loaded ${getPrettyDate(newDate)}`, 'info');
-    }
-
-    function checkTeacherConflict(teacherId, targetSlot, currentClassId) {
-      if (!teacherId) return { available: true };
-      const startMin = timeToMinutes(targetSlot.start);
-      const endMin = timeToMinutes(targetSlot.end);
-      const daySchedule = db.dateSchedules[activeDate] || {};
-
-      for (const cls of db.classes) {
-        if (cls.id === currentClassId) continue;
-        const clsDay = daySchedule[cls.id];
-        if (!clsDay) continue;
-
-        for (const s of (clsDay.slots || [])) {
-          if (s.type === 'lecture') {
-            const assign = (clsDay.assignments || {})[s.id];
-            if (assign && assign.teacherId === teacherId) {
-              const otherStart = timeToMinutes(s.start);
-              const otherEnd = timeToMinutes(s.end);
-              if (startMin < otherEnd && endMin > otherStart) {
-                return { available: false, conflictBatch: cls.name };
-              }
-            }
-          }
-        }
-      }
-      return { available: true };
-    }
-
-    function getTeacherAssignedSubjects(teacherId) {
-      const t = db.teachers.find(item => item.id === teacherId);
-      if (!t || !t.subjects) return [];
-      return t.subjects.split(',').map(s => s.trim()).filter(Boolean);
-    }
-
-    function renderEditTimetable() {
-      const cls = db.classes.find(c => c.id === activeClassId);
-      const headerBatch = document.getElementById('editHeaderBatchName');
-      const headerDate = document.getElementById('editHeaderDateDisplay');
-      if (headerBatch) headerBatch.innerText = `${cls ? cls.name : 'Batch'}`;
-      if (headerDate) headerDate.innerText = `Date: ${getPrettyDate(activeDate)}`;
-
-      const tbody = document.getElementById('editTableBody');
-      const emptyNotice = document.getElementById('editEmptyNotice');
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      const slots = dailyData.slots || [];
-
-      if (slots.length === 0) {
-        if (tbody) tbody.innerHTML = '';
-        if (emptyNotice) emptyNotice.classList.remove('hidden');
-        return;
-      }
-      if (emptyNotice) emptyNotice.classList.add('hidden');
-
-      const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-      const assigns = dailyData.assignments || {};
-
-      tbody.innerHTML = sortedSlots.map(slot => {
-        const timeStr = formatSlotRange(slot.start, slot.end);
-
-        if (slot.type === 'recess') {
-          return `
-            <tr class="bg-amber-50/70 border-y border-amber-200 text-amber-900">
-              <td class="py-2 px-2 font-bold text-[10px] whitespace-nowrap">
-                ${timeStr}
-              </td>
-              <td class="py-2 px-1"><span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-amber-200 text-amber-900">RECESS</span></td>
-              <td class="py-2 px-2 font-bold italic text-slate-700 text-[11px]">${slot.label || 'Recess / Break'}</td>
-              <td class="py-2 px-1 text-right no-print whitespace-nowrap">
-                <button type="button" onclick="openEditSlotModal('${slot.id}')" class="p-1 text-blue-700 hover:bg-white rounded"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
-                <button type="button" onclick="deleteSlotFromActiveDate('${slot.id}')" class="p-1 text-rose-600 hover:bg-rose-50 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-              </td>
-            </tr>
-          `;
-        }
-
-        if (slot.type === 'study') {
-          return `
-            <tr class="bg-purple-50/80 border-y border-purple-200 text-purple-950">
-              <td class="py-2 px-2 font-bold text-[10px] whitespace-nowrap">
-                ${timeStr}
-              </td>
-              <td class="py-2 px-1"><span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-purple-200 text-purple-900">STUDY</span></td>
-              <td class="py-2 px-2 font-bold text-purple-900 text-[11px]">${slot.label || 'Self-Study & Problem Practice'}</td>
-              <td class="py-2 px-1 text-right no-print whitespace-nowrap">
-                <button type="button" onclick="openEditSlotModal('${slot.id}')" class="p-1 text-purple-700 hover:bg-white rounded"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
-                <button type="button" onclick="deleteSlotFromActiveDate('${slot.id}')" class="p-1 text-rose-600 hover:bg-rose-50 rounded"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-              </td>
-            </tr>
-          `;
-        }
-
-        const currentAssign = assigns[slot.id] || {};
-        const selTeacherId = currentAssign.teacherId || '';
-        const selSubject = currentAssign.subject || '';
-        const conflict = checkTeacherConflict(selTeacherId, slot, activeClassId);
-
-        const teacherOpts = [`<option value="">-- Faculty --</option>`];
-        db.teachers.forEach(t => {
-          const tStatus = checkTeacherConflict(t.id, slot, activeClassId);
-          const isSelected = t.id === selTeacherId;
-          teacherOpts.push(`<option value="${t.id}" ${isSelected ? 'selected' : ''}>${tStatus.available ? '🟢' : '🔴'} ${t.name}</option>`);
-        });
-
-        let subjectOpts = '';
-        if (!selTeacherId) {
-          subjectOpts = `<option value="">-- Subject --</option>`;
-        } else {
-          const mappedSubs = getTeacherAssignedSubjects(selTeacherId);
-          subjectOpts = `<option value="">-- Subject --</option>` + mappedSubs.map(s => `
-            <option value="${s}" ${s === selSubject ? 'selected' : ''}>${s}</option>
-          `).join('');
-        }
-
-        return `
-          <tr class="hover:bg-slate-50 transition ${!conflict.available ? 'bg-rose-50/70' : ''}">
-            <td class="py-2 px-2 font-bold whitespace-nowrap text-slate-900 text-[10px]">
-              ${timeStr}
-            </td>
-            <td class="py-2 px-1"><span class="px-1 py-0.5 rounded text-[8px] font-extrabold bg-blue-100 text-blue-800 uppercase">LEC</span></td>
-            <td class="py-2 px-1 space-y-1">
-              <select onchange="updateClassSlotTeacher('${slot.id}', this.value)" class="w-full px-1.5 py-1 text-[11px] font-bold rounded-lg border ${!conflict.available ? 'border-rose-400 bg-rose-50 text-rose-800' : selTeacherId ? 'border-emerald-300 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-slate-50'} outline-none mobile-select">
-                ${teacherOpts.join('')}
-              </select>
-              <select onchange="updateClassSlotSubject('${slot.id}', this.value)" ${!selTeacherId ? 'disabled' : ''} class="w-full px-1.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 bg-slate-50 outline-none disabled:opacity-40 mobile-select">
-                ${subjectOpts}
-              </select>
-            </td>
-            <td class="py-2 px-1 text-right no-print whitespace-nowrap">
-              <div class="inline-flex flex-col gap-1 items-end">
-                <button type="button" onclick="openEditSlotModal('${slot.id}')" class="p-1 text-blue-700 bg-blue-50/60 rounded border border-blue-200"><i data-lucide="edit-2" class="w-3 h-3"></i></button>
-                <button type="button" onclick="deleteSlotFromActiveDate('${slot.id}')" class="p-1 text-rose-600 bg-rose-50/60 rounded border border-rose-200"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      safeCreateIcons();
-    }
-
-    function setViewMode(mode) {
-      currentViewMode = mode;
-      const classBtn = document.getElementById('viewFilterClassBtn');
-      const teacherBtn = document.getElementById('viewFilterTeacherBtn');
-      const classPicker = document.getElementById('viewClassPickerWrapper');
-      const teacherPicker = document.getElementById('viewTeacherPickerWrapper');
-
-      if (mode === 'class') {
-        if (classBtn) classBtn.className = "py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-sm";
-        if (teacherBtn) teacherBtn.className = "py-1 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1 text-slate-600";
-        if (classPicker) classPicker.classList.remove('hidden');
-        if (teacherPicker) teacherPicker.classList.add('hidden');
-      } else {
-        if (teacherBtn) teacherBtn.className = "py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 bg-white text-blue-700 shadow-sm";
-        if (classBtn) classBtn.className = "py-1 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1 text-slate-600";
-        if (teacherPicker) teacherPicker.classList.remove('hidden');
-        if (classPicker) classPicker.classList.add('hidden');
-      }
-      renderExportView();
-    }
-
-    function renderExportView() {
-      const badge = document.getElementById('viewDisplayBadge');
-      const subtext = document.getElementById('viewDisplaySubtext');
-      const thCol2 = document.getElementById('viewTableCol2');
-      const thCol3 = document.getElementById('viewTableCol3');
-      const tbody = document.getElementById('viewTableBody');
-
-      if (subtext) subtext.innerText = `Date: ${getPrettyDate(activeDate)}`;
-
-      if (currentViewMode === 'class') {
-        const cls = db.classes.find(c => c.id === activeClassId);
-        if (badge) badge.innerText = `Batch: ${cls ? cls.name : 'Batch'}`;
-        if (thCol2) thCol2.innerText = 'Teacher';
-        if (thCol3) thCol3.innerText = 'Subject';
-
-        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-        const slots = [...(dailyData.slots || [])].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-        const assigns = dailyData.assignments || {};
-
-        tbody.innerHTML = slots.map(slot => {
-          const timeStr = formatSlotRange(slot.start, slot.end);
-          if (slot.type === 'recess') {
-            return `<tr class="bg-amber-50/80 font-bold text-amber-900"><td class="py-2 px-2 text-[11px]">${timeStr}</td><td colspan="2" class="py-2 px-2 italic text-[11px]">RECESS: ${slot.label || 'Break'}</td></tr>`;
-          }
-          if (slot.type === 'study') {
-            return `<tr class="bg-purple-50/80 text-purple-950 font-bold"><td class="py-2 px-2 text-[11px]">${timeStr}</td><td colspan="2" class="py-2 px-2 text-[11px]">STUDY: ${slot.label || 'Self-Study Session'}</td></tr>`;
-          }
-          const assign = assigns[slot.id] || {};
-          const t = db.teachers.find(item => item.id === assign.teacherId)?.name || 'TBA';
-          const sub = assign.subject || 'TBA';
-          return `<tr class="hover:bg-slate-50"><td class="py-2 px-2 font-bold text-slate-900 text-[11px]">${timeStr}</td><td class="py-2 px-2 font-bold text-slate-800 text-[11px]">${t}</td><td class="py-2 px-2 font-semibold text-blue-700 text-[11px]">${sub}</td></tr>`;
-        }).join('');
-      } else {
-        const teacher = db.teachers.find(t => t.id === activeTeacherId);
-        if (badge) badge.innerText = `Faculty: ${teacher ? teacher.name : 'Faculty'}`;
-        if (thCol2) thCol2.innerText = 'Batch / Class';
-        if (thCol3) thCol3.innerText = 'Subject';
-
-        const teacherSlots = [];
-        const daySchedule = db.dateSchedules[activeDate] || {};
-
-        db.classes.forEach(cls => {
-          const clsDay = daySchedule[cls.id];
-          if (!clsDay) return;
-          (clsDay.slots || []).forEach(slot => {
-            const assign = (clsDay.assignments || {})[slot.id];
-            if (assign && assign.teacherId === activeTeacherId) {
-              teacherSlots.push({ slot, batchName: cls.name, subject: assign.subject || 'General' });
-            }
-          });
-        });
-
-        teacherSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
-
-        if (teacherSlots.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-slate-400 italic">No lectures assigned to this faculty on this date</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = teacherSlots.map(item => `
-          <tr class="hover:bg-slate-50">
-            <td class="py-2 px-2 font-bold text-slate-900 text-[11px]">${formatSlotRange(item.slot.start, item.slot.end)}</td>
-            <td class="py-2 px-2 font-bold text-blue-700 text-[11px]">${item.batchName}</td>
-            <td class="py-2 px-2 font-semibold text-slate-800 text-[11px]">${item.subject}</td>
-          </tr>
-        `).join('');
-      }
-
-      safeCreateIcons();
-    }
-
-    function updateClassSlotTeacher(slotId, newTeacherId) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
-      dailyData.assignments[slotId].teacherId = newTeacherId;
-      const subs = getTeacherAssignedSubjects(newTeacherId);
-      dailyData.assignments[slotId].subject = subs.length > 0 ? subs[0] : '';
-      saveDatabase();
-      renderEditTimetable();
-      renderExportView();
-    }
-
-    function updateClassSlotSubject(slotId, newSubject) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
-      dailyData.assignments[slotId].subject = newSubject;
-      saveDatabase();
-      renderEditTimetable();
-      renderExportView();
-    }
-
-    function clearAllRowsForCurrentDay() {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      dailyData.assignments = {};
-      saveDatabase();
-      renderEditTimetable();
-      renderExportView();
-      showToast('All slots cleared for this day', 'info');
-    }
-
-    function deleteSlotFromActiveDate(slotId) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      dailyData.slots = (dailyData.slots || []).filter(s => s.id !== slotId);
-      if (dailyData.assignments) delete dailyData.assignments[slotId];
-      saveDatabase();
-      renderEditTimetable();
-      renderExportView();
-      showToast('Slot removed', 'info');
-    }
-
-    function openEditSlotModal(slotId) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      const slot = (dailyData.slots || []).find(s => s.id === slotId);
-      if (!slot) return;
-      document.getElementById('editSlotId').value = slot.id;
-      document.getElementById('editSlotStart').value = slot.start;
-      document.getElementById('editSlotEnd').value = slot.end;
-      document.getElementById('editSlotType').value = slot.type;
-      document.getElementById('editSlotLabel').value = slot.label || '';
-      openModal('modalEditSlot');
-    }
-
-    function handleSaveEditedSlot(e) {
-      e.preventDefault();
-      const slotId = document.getElementById('editSlotId').value;
-      const start = document.getElementById('editSlotStart').value;
-      const end = document.getElementById('editSlotEnd').value;
-      const type = document.getElementById('editSlotType').value;
-      const label = document.getElementById('editSlotLabel').value.trim();
-
-      if (timeToMinutes(end) <= timeToMinutes(start)) {
-        showToast('End time must be later than start time', 'error');
-        return;
-      }
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      const slot = (dailyData.slots || []).find(s => s.id === slotId);
-      if (!slot) return;
-      slot.start = start;
-      slot.end = end;
-      slot.type = type;
-      slot.label = label;
-
-      saveDatabase();
-      closeModal('modalEditSlot');
-      renderEditTimetable();
-      renderExportView();
-      showToast('Slot updated!', 'success');
-    }
-
-    function handleDeleteSlotFromModal() {
-      const slotId = document.getElementById('editSlotId').value;
-      deleteSlotFromActiveDate(slotId);
-      closeModal('modalEditSlot');
-    }
-
-    function openAddNewSlotModal() {
-      document.getElementById('addSlotStart').value = '11:30';
-      document.getElementById('addSlotEnd').value = '12:30';
-      document.getElementById('addSlotType').value = 'lecture';
-      document.getElementById('addSlotLabel').value = '';
-      openModal('modalAddSlot');
-    }
-
-    function handleCreateNewSlot(e) {
-      e.preventDefault();
-      const start = document.getElementById('addSlotStart').value;
-      const end = document.getElementById('addSlotEnd').value;
-      const type = document.getElementById('addSlotType').value;
-      const label = document.getElementById('addSlotLabel').value.trim();
-
-      if (timeToMinutes(end) <= timeToMinutes(start)) {
-        showToast('End time must be after start time', 'error');
-        return;
-      }
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      if (!dailyData.slots) dailyData.slots = [];
-      dailyData.slots.push({
-        id: 'slot_' + Date.now(),
-        start, end, type,
-        label: label || (type === 'recess' ? 'Recess' : (type === 'study' ? 'Self-Study' : ''))
-      });
-      saveDatabase();
-      closeModal('modalAddSlot');
-      renderEditTimetable();
-      renderExportView();
-      showToast('Slot added!', 'success');
-    }
-
-    function openCopyDateModal() {
-      const cls = db.classes.find(c => c.id === activeClassId);
-      document.getElementById('copyClassName').value = cls ? cls.name : '';
-      document.getElementById('copySourceDate').value = activeDate;
-      document.getElementById('copyTargetDate').value = getTomorrowString();
-      openModal('modalCopyDate');
-    }
-
-    function executeCopySchedule() {
-      const srcDate = document.getElementById('copySourceDate').value;
-      const tgtDate = document.getElementById('copyTargetDate').value;
-      if (!srcDate || !tgtDate || srcDate === tgtDate) {
-        showToast('Select valid source & target dates', 'error');
-        return;
-      }
-      const srcData = getOrCreateDailySchedule(srcDate, activeClassId);
-      if (!srcData || !srcData.slots || srcData.slots.length === 0) {
-        showToast('No schedule found on source date', 'error');
-        return;
-      }
-      if (!db.dateSchedules[tgtDate]) db.dateSchedules[tgtDate] = {};
-      db.dateSchedules[tgtDate][activeClassId] = {
-        slots: JSON.parse(JSON.stringify(srcData.slots)),
-        assignments: JSON.parse(JSON.stringify(srcData.assignments || {}))
-      };
-      saveDatabase();
-      closeModal('modalCopyDate');
-      syncDate(tgtDate);
-      showToast(`Copied to ${getPrettyDate(tgtDate)}!`, 'success');
+createIcons();
     }
 
     /* -------------------------------------------------------------
-       CANVAS HIGH-DEFINITION SMARTPHONE ENGINE + MOBILE SAVE
+       INITIAL APP BOOTSTRAP
        ------------------------------------------------------------- */
-    let lastExportDataUrl = '';
-    let lastExportBytes = null;
-    let lastExportFilename = 'SUPER30_Timetable.png';
-    let activeBlobUrl = '';
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDatabase();
 
-    function drawRoundRect(ctx, x, y, w, h, r) {
-      const radius = Math.min(r || 8, w / 2, h / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.arcTo(x + w, y, x + w, y + h, radius);
-      ctx.arcTo(x + w, y + h, x, y + h, radius);
-      ctx.arcTo(x, y + h, x, y, radius);
-      ctx.arcTo(x, y, x + w, y, radius);
-      ctx.closePath();
-    }
-
-    function getPaletteBannerColors() {
-      const p = db.tableStyle || 'modern';
-      switch (p) {
-        case 'aurora': return { g1: '#097969', g2: '#0ea5e9', text: '#ffffff', accent: '#a7f3d0' };
-        case 'sunset': return { g1: '#f43f5e', g2: '#f97316', text: '#ffffff', accent: '#fef08a' };
-        case 'cyberpunk': return { g1: '#9333ea', g2: '#0284c7', text: '#ffffff', accent: '#67e8f9' };
-        case 'emerald-glow': return { g1: '#064e3b', g2: '#059669', text: '#ffffff', accent: '#6ee7b7' };
-        case 'cosmic': return { g1: '#1e1b4b', g2: '#581c87', text: '#fde047', accent: '#f59e0b' };
-        case 'gold': return { g1: '#0f172a', g2: '#1e293b', text: '#facc15', accent: '#fbbf24' };
-        case 'clean': return { g1: '#f1f5f9', g2: '#e2e8f0', text: '#0f172a', accent: '#2563eb' };
-        default: return { g1: '#1d4ed8', g2: '#0f172a', text: '#ffffff', accent: '#fcd34d' };
-      }
-    }
-
-    function dataUrlToUint8Array(dataUrl) {
-      const base64 = dataUrl.split(',')[1] || '';
-      const binary = atob(base64);
-      const len = binary.length;
-      const bytes = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-      return bytes;
-    }
-
-    function buildExportImageSynchronously() {
-      const cls = db.classes.find(c => c.id === activeClassId);
-      const isClassMode = currentViewMode === 'class';
-      const titleEntity = isClassMode
-        ? (cls ? cls.name : 'Batch')
-        : (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty');
-      const subLabel = isClassMode ? 'BATCH TIMETABLE' : 'FACULTY SCHEDULE';
-
-      const rows = [];
-      const daySchedule = db.dateSchedules[activeDate] || {};
-
-      if (isClassMode) {
-        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-        const slots = [...(dailyData.slots || [])].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-        const assigns = dailyData.assignments || {};
-
-        slots.forEach(slot => {
-          const time = formatSlotRange(slot.start, slot.end);
-          if (slot.type === 'recess') {
-            rows.push({ time, type: 'recess', label: slot.label || 'Recess' });
-          } else if (slot.type === 'study') {
-            rows.push({ time, type: 'study', label: slot.label || 'Self-Study & DPP Practice' });
-          } else {
-            const assign = assigns[slot.id] || {};
-            const t = db.teachers.find(item => item.id === assign.teacherId)?.name || 'TBA';
-            const sub = assign.subject || 'TBA';
-            rows.push({ time, type: 'lecture', col2: t, col3: sub });
-          }
-        });
-      } else {
-        const tSlots = [];
-        db.classes.forEach(c => {
-          const clsDay = daySchedule[c.id];
-          if (!clsDay) return;
-          (clsDay.slots || []).forEach(slot => {
-            const assign = (clsDay.assignments || {})[slot.id];
-            if (assign && assign.teacherId === activeTeacherId) {
-              tSlots.push({ slot, batchName: c.name, subject: assign.subject || 'General' });
-            }
-          });
-        });
-        tSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
-        tSlots.forEach(item => {
-          rows.push({ time: formatSlotRange(item.slot.start, item.slot.end), type: 'lecture', col2: item.batchName, col3: item.subject });
-        });
-      }
-
-      const scale = 2;
-      const width = 500;
-      const headerHeight = 175;
-      const rowHeight = 52;
-      const footerHeight = 85;
-      const emptyHeight = rows.length === 0 ? 90 : 0;
-      const totalHeight = headerHeight + (rows.length * rowHeight) + emptyHeight + footerHeight;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width * scale;
-      canvas.height = totalHeight * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(scale, scale);
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, width, totalHeight);
-
-      const palette = getPaletteBannerColors();
-      const grad = ctx.createLinearGradient(0, 0, width, headerHeight);
-      grad.addColorStop(0, palette.g1);
-      grad.addColorStop(1, palette.g2);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, 115);
-
-      ctx.fillStyle = '#ffffff';
-      drawRoundRect(ctx, 16, 16, 52, 52, 14);
-      ctx.fill();
-
-      ctx.fillStyle = '#1d4ed8';
-      ctx.font = '900 22px Outfit, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('S30', 42, 42);
-
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillStyle = palette.text;
-      ctx.font = '900 17px Outfit, sans-serif';
-      ctx.fillText('SUPER 30 ACADEMY', 78, 38);
-
-      ctx.fillStyle = palette.accent;
-      ctx.font = '800 11px Outfit, sans-serif';
-      ctx.fillText('KARAD • JEE • NEET • MHT-CET', 78, 56);
-
-      ctx.fillStyle = '#e2e8f0';
-      ctx.font = '600 10.5px Plus Jakarta Sans, sans-serif';
-      ctx.fillText('Official Timetable • Created by Ram Sir', 78, 72);
-
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(0, 115, width, 55);
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, 170);
-      ctx.lineTo(width, 170);
-      ctx.stroke();
-
-      ctx.fillStyle = '#0f172a';
-      ctx.font = '800 13px Plus Jakarta Sans, sans-serif';
-      ctx.fillText(`${subLabel}: ${titleEntity}`, 16, 138);
-
-      ctx.fillStyle = '#2563eb';
-      ctx.font = '700 11.5px Plus Jakarta Sans, sans-serif';
-      ctx.fillText(`Date: ${getPrettyDate(activeDate)}`, 16, 156);
-
-      const tableHeadY = 170;
-      ctx.fillStyle = palette.g1;
-      ctx.fillRect(10, tableHeadY + 5, width - 20, 28);
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
-      ctx.fillText('TIME SLOT', 22, tableHeadY + 23);
-      ctx.fillText(isClassMode ? 'TEACHER' : 'BATCH / CLASS', 180, tableHeadY + 23);
-      ctx.fillText('SUBJECT', 340, tableHeadY + 23);
-
-      let currentY = tableHeadY + 34;
-
-      if (rows.length === 0) {
-        ctx.fillStyle = '#64748b';
-        ctx.font = 'italic 12px Plus Jakarta Sans, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('No sessions scheduled for this date.', width / 2, currentY + 40);
-        ctx.textAlign = 'left';
-        currentY += emptyHeight;
-      } else {
-        rows.forEach((row, i) => {
-          if (row.type === 'recess') ctx.fillStyle = '#fef3c7';
-          else if (row.type === 'study') ctx.fillStyle = '#f3e8ff';
-          else ctx.fillStyle = i % 2 === 0 ? '#ffffff' : '#f8fafc';
-
-          ctx.fillRect(10, currentY, width - 20, rowHeight - 2);
-
-          ctx.strokeStyle = '#e2e8f0';
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(10, currentY + rowHeight - 2);
-          ctx.lineTo(width - 10, currentY + rowHeight - 2);
-          ctx.stroke();
-
-          ctx.fillStyle = '#0f172a';
-          ctx.font = '800 11px Plus Jakarta Sans, sans-serif';
-          ctx.fillText(row.time, 18, currentY + 30);
-
-          if (row.type === 'recess') {
-            ctx.fillStyle = '#d97706';
-            drawRoundRect(ctx, 180, currentY + 16, 56, 19, 6);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 9.5px Plus Jakarta Sans, sans-serif';
-            ctx.fillText('RECESS', 188, currentY + 29);
-
-            ctx.fillStyle = '#92400e';
-            ctx.font = 'italic 700 11.5px Plus Jakarta Sans, sans-serif';
-            ctx.fillText(row.label || 'Recess', 245, currentY + 30);
-          } else if (row.type === 'study') {
-            ctx.fillStyle = '#7e22ce';
-            drawRoundRect(ctx, 180, currentY + 16, 92, 19, 6);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 9px Plus Jakarta Sans, sans-serif';
-            ctx.fillText('STUDY SESSION', 186, currentY + 29);
-
-            ctx.fillStyle = '#581c87';
-            ctx.font = '700 11px Plus Jakarta Sans, sans-serif';
-            ctx.fillText(row.label || 'Self-Study Session', 280, currentY + 30);
-          } else {
-            ctx.fillStyle = '#1e293b';
-            ctx.font = '800 11px Plus Jakarta Sans, sans-serif';
-            ctx.fillText(row.col2, 180, currentY + 30);
-
-            ctx.fillStyle = '#2563eb';
-            ctx.font = '700 11px Plus Jakarta Sans, sans-serif';
-            ctx.fillText(row.col3, 340, currentY + 30);
-          }
-
-          currentY += rowHeight;
-        });
-      }
-
-      const footerY = currentY + 12;
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(16, footerY);
-      ctx.lineTo(width - 16, footerY);
-      ctx.stroke();
-
-      ctx.fillStyle = '#64748b';
-      ctx.font = '700 10px Plus Jakarta Sans, sans-serif';
-      ctx.fillText('SUPER 30 ACADEMY, KARAD • JEE | NEET | MHT-CET', 16, footerY + 22);
-
-      ctx.fillStyle = '#1d4ed8';
-      ctx.font = '800 10.5px Plus Jakarta Sans, sans-serif';
-      ctx.fillText('Official Timetable • Created by Ram Sir', 16, footerY + 38);
-
-      lastExportDataUrl = canvas.toDataURL('image/png');
-      lastExportBytes = dataUrlToUint8Array(lastExportDataUrl);
-
-      const namePart = isClassMode ? (cls ? cls.name : 'Batch') : titleEntity;
-      lastExportFilename = `SUPER30_${namePart.replace(/[^a-zA-Z0-9]/g, '_')}_${activeDate}.png`;
-
-      const previewImg = document.getElementById('exportPreviewImg');
-      const labelEl = document.getElementById('exportFilenameLabel');
-      if (previewImg) previewImg.src = lastExportDataUrl;
-      if (labelEl) labelEl.innerText = lastExportFilename;
-    }
-
-    function getExportFile() {
-      if (!lastExportBytes) buildExportImageSynchronously();
-      return new File([lastExportBytes], lastExportFilename, { type: 'image/png' });
-    }
-
-    function downloadTimetablePNG() {
-      try {
-        buildExportImageSynchronously();
-        openModal('modalExportPreview');
-        showToast('PNG ready — tap Save PNG or touch & hold image', 'success');
-      } catch (err) {
-        console.error('PNG generation failed:', err);
-        showToast('Could not generate PNG image', 'error');
-      }
-    }
-
-    async function triggerMobileSave() {
-      if (!lastExportBytes) buildExportImageSynchronously();
-      const file = getExportFile();
-
-      // 1. Web Share API (preserves immediate user gesture on HTTPS mobile browsers)
-      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'SUPER 30 ACADEMY Timetable',
-            text: `SUPER 30 ACADEMY Timetable (${getPrettyDate(activeDate)})`
-          });
-          showToast('Saved / shared via mobile share menu', 'success');
-          return;
-        } catch (err) {
-          if (err && err.name === 'AbortError') return;
-        }
-      }
-
-      // 2. Blob URL download link fallback
-      try {
-        if (activeBlobUrl) URL.revokeObjectURL(activeBlobUrl);
-        const blob = new Blob([lastExportBytes], { type: 'image/png' });
-        activeBlobUrl = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = activeBlobUrl;
-        link.download = lastExportFilename;
-        document.body.appendChild(link);
-        link.click();
-        setTimeout(() => document.body.removeChild(link), 300);
-
-        showToast('If download did not start, touch & hold the picture below', 'info');
-      } catch (err) {
-        showToast('Touch and hold the picture below to save image', 'info');
-      }
-    }
-
-    async function shareImageDirectToWhatsApp() {
-      if (!lastExportBytes) buildExportImageSynchronously();
-      const file = getExportFile();
-      const cls = db.classes.find(c => c.id === activeClassId);
-      const name = currentViewMode === 'class'
-        ? (cls ? cls.name : 'Class')
-        : (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty');
-
-      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: `SUPER 30 ACADEMY - ${name}`,
-            text: `SUPER 30 ACADEMY, KARAD • ${name} (${getPrettyDate(activeDate)}) • Created by Ram Sir`
-          });
-          return;
-        } catch (err) {
-          if (err && err.name === 'AbortError') return;
-        }
-      }
-
-      showToast('Image share unavailable here — opening WhatsApp text schedule', 'info');
-      shareViaWhatsApp();
-    }
-
-    function notifyLongPressHint() {
-      showToast('Touch and hold (long-press) this image to choose "Save image" or "Download image"', 'info');
-    }
-
-    function shareViaWhatsApp() {
-      const cls = db.classes.find(c => c.id === activeClassId);
-      const name = currentViewMode === 'class' ? (cls ? cls.name : 'Class Schedule') : (db.teachers.find(t => t.id === activeTeacherId)?.name || 'Faculty Schedule');
-      
-      let msg = `🎓 *SUPER 30 ACADEMY, KARAD*\n`;
-      msg += `📌 *Daily Timetable Schedule*\n`;
-      msg += `🌟 *Created by Ram Sir*\n`;
-      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      msg += `📚 *Entity:* ${name}\n`;
-      msg += `🗓️ *Date:* ${getPrettyDate(activeDate)}\n`;
-      msg += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
-
-      if (currentViewMode === 'class') {
-        const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-        const slots = dailyData.slots || [];
-        const assigns = dailyData.assignments || {};
-        const sorted = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
-
-        sorted.forEach(s => {
-          const time = formatSlotRange(s.start, s.end);
-          if (s.type === 'recess') {
-            msg += `☕ *${time}* ➔ *RECESS*\n\n`;
-          } else if (s.type === 'study') {
-            msg += `📖 *${time}* ➔ *STUDY:* ${s.label || 'Self-Study Session'}\n\n`;
-          } else {
-            const assign = assigns[s.id] || {};
-            const t = db.teachers.find(item => item.id === assign.teacherId)?.name || 'TBA';
-            const sub = assign.subject || 'TBA';
-            msg += `📚 *${time}*\n   • Faculty: *${t}*\n   • Subject: *${sub}*\n\n`;
-          }
-        });
-      } else {
-        const daySchedule = db.dateSchedules[activeDate] || {};
-        const tSlots = [];
-        db.classes.forEach(c => {
-          const clsDay = daySchedule[c.id];
-          if (!clsDay) return;
-          (clsDay.slots || []).forEach(slot => {
-            const assign = (clsDay.assignments || {})[slot.id];
-            if (assign && assign.teacherId === activeTeacherId) {
-              tSlots.push({ slot, batchName: c.name, subject: assign.subject || 'General' });
-            }
-          });
-        });
-        tSlots.sort((a, b) => timeToMinutes(a.slot.start) - timeToMinutes(b.slot.start));
-        tSlots.forEach(item => {
-          msg += `📚 *${formatSlotRange(item.slot.start, item.slot.end)}*\n   • Batch: *${item.batchName}*\n   • Subject: *${item.subject}*\n\n`;
-        });
-      }
-
-      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      msg += `📍 *SUPER 30 ACADEMY, KARAD*\n`;
-      msg += `💡 Strive for Excellence in JEE & NEET!`;
-
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function populateSelectors() {
-      const editClass = document.getElementById('editClassSelect');
-      const viewClass = document.getElementById('viewClassSelect');
-      const viewTeacher = document.getElementById('viewTeacherSelect');
-
-      if (editClass) editClass.innerHTML = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      if (viewClass) viewClass.innerHTML = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      if (viewTeacher) viewTeacher.innerHTML = db.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-
-      if (editClass) editClass.value = activeClassId;
-      if (viewClass) viewClass.value = activeClassId;
-      if (viewTeacher) viewTeacher.value = activeTeacherId;
-    }
-
-    function onEditClassChange(val) {
-      activeClassId = val;
-      const viewClass = document.getElementById('viewClassSelect');
-      if (viewClass) viewClass.value = val;
-      renderEditTimetable();
-      renderExportView();
-    }
-
-    function onViewClassChange(val) {
-      activeClassId = val;
-      const editClass = document.getElementById('editClassSelect');
-      if (editClass) editClass.value = val;
-      renderEditTimetable();
-      renderExportView();
-    }
-
-    function onViewTeacherChange(val) {
-      activeTeacherId = val;
-      renderExportView();
-    }
-
-    function onDateChange(val) { syncDate(val); }
-
-    function changeTableStyle(styleName) {
-      const editTable = document.getElementById('mainTimetable');
-      const viewTable = document.getElementById('viewTimetable');
-      if (editTable) editTable.className = `w-full text-left border-collapse table-${styleName}`;
-      if (viewTable) viewTable.className = `w-full text-left border-collapse table-${styleName}`;
-
-      const themeMap = {
-        'modern': 'blue', 'aurora': 'aurora', 'sunset': 'sunset',
-        'cyberpunk': 'cyberpunk', 'emerald-glow': 'emerald-glow',
-        'cosmic': 'cosmic', 'gold': 'blue', 'clean': 'blue'
-      };
-      const matchingTheme = themeMap[styleName] || 'blue';
-      document.body.setAttribute('data-theme', matchingTheme);
-
+      const selectedStyle = db.tableStyle || 'modern';
       const tablePreset = document.getElementById('activeTablePreset');
-      if (tablePreset) tablePreset.value = styleName;
+      if (tablePreset) tablePreset.value = selectedStyle;
+      changeTableStyle(selectedStyle);
 
-      db.tableStyle = styleName;
-      db.theme = matchingTheme;
-      saveDatabase();
-    }
+      const dateInput = document.getElementById('activeDateInput');
+      if (dateInput) dateInput.value = activeDate;
 
-    function switchTab(tabId) {
-      currentTab = tabId;
-      ['edit-timetable', 'view-export', 'settings'].forEach(t => {
-        const sec = document.getElementById(`section-${t}`);
-        const btn = document.getElementById(`tab-${t}`);
-        if (t === tabId) {
-          if (sec) sec.classList.remove('hidden');
-          if (btn) btn.className = "px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 whitespace-nowrap bg-blue-50 text-blue-700 flex-shrink-0";
-        } else {
-          if (sec) sec.classList.add('hidden');
-          if (btn) btn.className = "px-2.5 py-1.5 rounded-xl text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap text-slate-600 hover:bg-slate-100 flex-shrink-0";
-        }
-      });
+      populateSelectors();
+      setViewMode(db.viewMode || 'class');
+      renderOverviewTab();
+      renderSettingsTab();
 
-      if (tabId === 'edit-timetable') renderEditTimetable();
-      if (tabId === 'view-export') renderExportView();
-      if (tabId === 'settings') renderSettingsTab();
+      // Live clock
+      const clockEl = document.getElementById('headerLiveClock');
+      if (clockEl) {
+        const updateClock = () => {
+          clockEl.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        };
+        updateClock();
+        setInterval(updateClock, 15000);
+      }
 
-      safeCreateIcons();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+      lucide.createIcons();
+    });
 
+    /* -------------------------------------------------------------
+       TAB 3: SETTINGS & MASTERS
+       ------------------------------------------------------------- */
     function renderSettingsTab() {
-      const badgeClasses = document.getElementById('badgeClassesCount');
-      const badgeTeachers = document.getElementById('badgeTeachersCount');
-      const badgeSubs = document.getElementById('badgeSubsCount');
-      if (badgeClasses) badgeClasses.innerText = db.classes.length;
-      if (badgeTeachers) badgeTeachers.innerText = db.teachers.length;
-      if (badgeSubs) badgeSubs.innerText = db.subjects.length;
+      document.getElementById('badgeClassesCount').innerText = db.classes.length;
+      document.getElementById('settBatchList').innerHTML = db.classes.map(c => `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+          <span class="font-bold text-slate-800">${c.name}</span>
+          <button onclick="handleDeleteBatch('${c.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
 
-      const settBatch = document.getElementById('settBatchList');
-      if (settBatch) {
-        settBatch.innerHTML = db.classes.map(c => `
-          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-            <span class="font-bold text-slate-800">${c.name}</span>
-            <button type="button" onclick="handleDeleteBatch('${c.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+      document.getElementById('badgeTeachersCount').innerText = db.teachers.length;
+      document.getElementById('settTeacherList').innerHTML = db.teachers.map(t => `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+          <div>
+            <div class="font-bold text-slate-800">${t.name}</div>
+            <div class="text-[10px] text-slate-400">${t.subjects || 'General'}</div>
           </div>
-        `).join('');
-      }
+          <button onclick="handleDeleteFaculty('${t.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
 
-      const settTeacher = document.getElementById('settTeacherList');
-      if (settTeacher) {
-        settTeacher.innerHTML = db.teachers.map(t => `
-          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-            <div>
-              <div class="font-bold text-slate-800">${t.name}</div>
-              <div class="text-[10px] text-slate-400">${t.subjects || 'General'}</div>
-            </div>
-            <button type="button" onclick="handleDeleteFaculty('${t.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
-        `).join('');
-      }
+      document.getElementById('badgeSubsCount').innerText = db.subjects.length;
+      document.getElementById('settSubjectList').innerHTML = db.subjects.map(s => `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+          <span class="font-bold text-slate-800">${s.name}</span>
+          <button onclick="handleDeleteSubject('${s.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
 
-      const settSub = document.getElementById('settSubjectList');
-      if (settSub) {
-        settSub.innerHTML = db.subjects.map(s => `
-          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-            <span class="font-bold text-slate-800">${s.name}</span>
-            <button type="button" onclick="handleDeleteSubject('${s.id}')" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </div>
-        `).join('');
-      }
-
-      safeCreateIcons();
+      lucide.createIcons();
     }
 
     function handleAddBatch() {
@@ -1758,15 +82,15 @@
         defaultSlots: [
           { id: 's_1', start: '08:00', end: '09:00', type: 'lecture' },
           { id: 's_2', start: '09:00', end: '10:00', type: 'lecture' },
-          { id: 's_3', start: '10:00', end: '10:30', type: 'recess', label: 'Recess' }
+          { id: 's_3', start: '10:00', end: '10:30', type: 'recess', label: 'Tea Break' }
         ]
       });
       saveDatabase();
       document.getElementById('newBatchNameInput').value = '';
       populateSelectors();
       renderSettingsTab();
-      renderEditTimetable();
-      showToast('Batch registered!', 'success');
+      renderActiveView();
+      showToast(`Batch "${val}" registered!`, 'success');
     }
 
     function handleDeleteBatch(id) {
@@ -1774,13 +98,13 @@
         showToast('At least one batch must remain', 'error');
         return;
       }
-      if (confirm('Delete this batch?')) {
+      if (window.confirm('Delete this batch?')) {
         db.classes = db.classes.filter(c => c.id !== id);
         if (activeClassId === id) activeClassId = db.classes[0].id;
         saveDatabase();
         populateSelectors();
         renderSettingsTab();
-        renderEditTimetable();
+        renderActiveView();
         showToast('Batch removed', 'info');
       }
     }
@@ -1789,24 +113,29 @@
       const name = document.getElementById('newTeacherNameInput').value.trim();
       const subs = document.getElementById('newTeacherSubsInput').value.trim();
       if (!name) return;
-      db.teachers.push({ id: 't_' + Date.now(), name, subjects: subs || 'General' });
+
+      db.teachers.push({
+        id: 't_' + Date.now(),
+        name,
+        subjects: subs || 'General'
+      });
       saveDatabase();
       document.getElementById('newTeacherNameInput').value = '';
       document.getElementById('newTeacherSubsInput').value = '';
       populateSelectors();
       renderSettingsTab();
-      renderEditTimetable();
-      showToast('Faculty added!', 'success');
+      renderActiveView();
+      showToast(`Faculty "${name}" added!`, 'success');
     }
 
     function handleDeleteFaculty(id) {
-      if (confirm('Remove this faculty member?')) {
+      if (window.confirm('Remove this faculty member?')) {
         db.teachers = db.teachers.filter(t => t.id !== id);
         saveDatabase();
         populateSelectors();
         renderSettingsTab();
-        renderEditTimetable();
-        showToast('Faculty removed', 'info');
+        renderActiveView();
+        showToast('Faculty member removed', 'info');
       }
     }
 
@@ -1817,7 +146,7 @@
       saveDatabase();
       document.getElementById('newSubInput').value = '';
       renderSettingsTab();
-      showToast('Subject added!', 'success');
+      showToast(`Subject "${val}" added!`, 'success');
     }
 
     function handleDeleteSubject(id) {
@@ -1826,27 +155,49 @@
       renderSettingsTab();
     }
 
+    /* -------------------------------------------------------------
+       GENERAL TAB SWITCHING & MODAL UTILITIES
+       ------------------------------------------------------------- */
+    function switchTab(tabId) {
+      ['timetable', 'overview', 'settings'].forEach(t => {
+        const sec = document.getElementById(`section-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          sec.classList.remove('hidden');
+          btn.className = "px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap bg-blue-50 text-blue-700";
+        } else {
+          sec.classList.add('hidden');
+          btn.className = "px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 whitespace-nowrap text-slate-600 hover:bg-slate-100";
+        }
+      });
+
+      if (tabId === 'timetable') renderActiveView();
+      if (tabId === 'overview') renderOverviewTab();
+      if (tabId === 'settings') renderSettingsTab();
+
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function openModal(id) {
-      const m = document.getElementById(id);
-      if (m) m.classList.remove('hidden');
-      safeCreateIcons();
+      document.getElementById(id).classList.remove('hidden');
+      lucide.createIcons();
     }
 
     function closeModal(id) {
-      const m = document.getElementById(id);
-      if (m) m.classList.add('hidden');
+      document.getElementById(id).classList.add('hidden');
     }
 
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
-      if (!container) return;
       const toast = document.createElement('div');
       const colors = {
         success: 'bg-emerald-600 text-white',
         error: 'bg-rose-600 text-white',
         info: 'bg-slate-900 text-white'
       };
-      toast.className = `flex items-center gap-2 px-3 py-2 rounded-xl shadow-xl text-xs font-bold transition-all transform translate-y-4 opacity-0 pointer-events-auto ${colors[type] || colors.info}`;
+
+      toast.className = `flex items-center gap-2 px-4 py-3 rounded-2xl shadow-xl text-xs font-bold transition-all transform translate-y-4 opacity-0 pointer-events-auto ${colors[type] || colors.info}`;
       toast.innerHTML = `<span>${msg}</span>`;
       container.appendChild(toast);
 
@@ -1854,36 +205,8 @@
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 400);
-      }, 3000);
+      }, 3200);
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadDatabase();
-
-      const selectedStyle = db.tableStyle || 'modern';
-      const tablePreset = document.getElementById('activeTablePreset');
-      if (tablePreset) tablePreset.value = selectedStyle;
-      changeTableStyle(selectedStyle);
-
-      const editDateInput = document.getElementById('activeDateInput');
-      if (editDateInput) editDateInput.value = activeDate;
-
-      populateSelectors();
-      renderEditTimetable();
-      renderExportView();
-      renderSettingsTab();
-
-      const clockEl = document.getElementById('headerLiveClock');
-      if (clockEl) {
-        const updateClock = () => {
-          clockEl.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        };
-        updateClock();
-        setInterval(updateClock, 15000);
-      }
-
-      safeCreateIcons();
-    });
   </script>
 </body>
 </html>
