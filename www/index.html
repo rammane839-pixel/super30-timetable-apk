@@ -129,38 +129,46 @@
       border-color: #fef08a !important;
     }
 
-    /* Table-Only Theme Gradients */
+    /* Table-Only Theme Gradients (html2canvas-safe standard directional gradients) */
     .table-theme-purple-cyan {
-      background: linear-gradient(90deg, #8b2cf5 0%, #2563eb 55%, #06b6d4 100%) !important;
+      background: #2563eb;
+      background: linear-gradient(to right, #8b2cf5 0%, #2563eb 55%, #06b6d4 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-aurora {
-      background: linear-gradient(90deg, #059669 0%, #0284c7 50%, #4f46e5 100%) !important;
+      background: #0284c7;
+      background: linear-gradient(to right, #059669 0%, #0284c7 50%, #4f46e5 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-sunset {
-      background: linear-gradient(90deg, #e11d48 0%, #ea580c 50%, #eab308 100%) !important;
+      background: #ea580c;
+      background: linear-gradient(to right, #e11d48 0%, #ea580c 50%, #eab308 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-crimson {
-      background: linear-gradient(90deg, #881337 0%, #be123c 55%, #fb7185 100%) !important;
+      background: #be123c;
+      background: linear-gradient(to right, #881337 0%, #be123c 55%, #fb7185 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-emerald {
-      background: linear-gradient(90deg, #064e3b 0%, #059669 55%, #34d399 100%) !important;
+      background: #059669;
+      background: linear-gradient(to right, #064e3b 0%, #059669 55%, #34d399 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-cyberpunk {
-      background: linear-gradient(90deg, #c026d3 0%, #4338ca 50%, #06b6d4 100%) !important;
+      background: #4338ca;
+      background: linear-gradient(to right, #c026d3 0%, #4338ca 50%, #06b6d4 100%) !important;
       color: #ffffff !important;
     }
     .table-theme-gold {
-      background: linear-gradient(90deg, #0f172a 0%, #334155 50%, #b45309 100%) !important;
+      background: #1e293b;
+      background: linear-gradient(to right, #0f172a 0%, #334155 50%, #b45309 100%) !important;
       color: #fef08a !important;
       border-bottom: 2px solid #eab308;
     }
     .table-theme-slate {
-      background: linear-gradient(90deg, #1e293b 0%, #334155 100%) !important;
+      background: #1e293b;
+      background: linear-gradient(to right, #1e293b 0%, #334155 100%) !important;
       color: #ffffff !important;
     }
 
@@ -294,6 +302,24 @@
     .recess-badge {
       background-color: #fde047;
       color: #713f12;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    /* Exam slot styling */
+    .exam-row {
+      background-color: #fff1f2 !important;
+      border-left: 3px solid #e11d48 !important;
+    }
+    .exam-badge {
+      background-color: #ffe4e6;
+      color: #be123c;
+      border: 1px solid #f43f5e;
       border-radius: 9999px;
       padding: 2px 8px;
       font-size: 10px;
@@ -524,10 +550,10 @@
             </div>
 
             <div class="text-left xs:text-right flex-shrink-0">
-              <div id="viewDisplayBadge" class="inline-block px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[8.5px] sm:text-xs font-black text-blue-700 bg-blue-50 border border-blue-200 uppercase tracking-tight">
+              <div id="viewDisplayBadge" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
                 BATCH: CLASS 11 - JEE ADVANCED
               </div>
-              <div class="text-[8.5px] sm:text-[11px] font-bold text-slate-600 mt-0.5" id="viewDisplaySubtext">
+              <div class="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1" id="viewDisplaySubtext">
                 Schedule Date: Fri, 20 Nov, 2026
               </div>
             </div>
@@ -681,10 +707,10 @@
           </div>
 
           <div class="text-right flex-shrink-0">
-            <div id="fsBadgeBatch" class="inline-block px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[8.5px] sm:text-xs font-black text-blue-700 bg-blue-50 border border-blue-200 uppercase tracking-tight">
+            <div id="fsBadgeBatch" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
               BATCH: CLASS 11 - JEE ADVANCED
             </div>
-            <div class="text-[8px] sm:text-xs font-bold text-slate-600 mt-0.5" id="fsDateDisplay">
+            <div class="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1" id="fsDateDisplay">
               Schedule Date: Fri, 20 Nov, 2026
             </div>
           </div>
@@ -715,10 +741,13 @@
 
     </div>
 
-    <!-- Floating unhide button when in pure screenshot mode -->
-    <button id="fsUnhideBtn" onclick="toggleCleanScreenshotMode()" class="fixed top-3 right-3 z-50 p-2.5 bg-slate-900 text-white rounded-full hidden hover:bg-slate-800 shadow-xl border border-slate-700">
-      <i data-lucide="eye" class="w-4 h-4"></i>
-    </button>
+    <!-- Floating bottom unhide bar when in pure screenshot mode (Unobtrusive) -->
+    <div id="fsUnhideBottomBar" class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 hidden no-print">
+      <button onclick="toggleCleanScreenshotMode()" class="px-4 py-2 bg-slate-900/90 hover:bg-slate-950 text-white font-bold text-xs rounded-full shadow-2xl border border-slate-700 backdrop-blur-md flex items-center gap-1.5 transition">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Exit Screenshot View</span>
+      </button>
+    </div>
   </div>
 
 
@@ -750,20 +779,85 @@
 
         <div>
           <label class="block font-bold text-slate-600 mb-1">Slot Category</label>
-          <select id="addSlotType" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
+          <select id="addSlotType" onchange="onAddSlotTypeChange(this.value)" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none">
             <option value="lecture">Standard Lecture</option>
+            <option value="study">Study / Self-Study Session</option>
+            <option value="exam">Exam / Weekly Test Slot</option>
             <option value="recess">Recess / Break</option>
           </select>
         </div>
 
         <div>
-          <label class="block font-bold text-slate-600 mb-1">Recess Label (If applicable)</label>
-          <input type="text" id="addSlotLabel" placeholder="e.g. Recess Break" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 outline-none">
+          <label class="block font-bold text-slate-600 mb-1" id="addSlotLabelTitle">Session / Recess Description</label>
+          <input type="text" id="addSlotLabel" placeholder="e.g. DPP Problem Solving or Self-Study" class="w-full px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 outline-none">
         </div>
 
         <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
           <button type="button" onclick="closeModal('modalAddSlot')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
           <button type="submit" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow">+ Add Slot</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- MODAL: EDIT BATCH NAME -->
+  <!-- ============================================================== -->
+  <div id="modalEditBatch" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 border border-slate-200 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+          <i data-lucide="edit-3" class="w-4 h-4 text-blue-600"></i> Edit Batch / Class
+        </h3>
+        <button onclick="closeModal('modalEditBatch')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveEditedBatch(event)" class="mt-3 space-y-3 text-xs">
+        <input type="hidden" id="editBatchId">
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Batch Name</label>
+          <input type="text" id="editBatchNameInput" required class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeModal('modalEditBatch')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: EDIT FACULTY -->
+  <!-- ============================================================== -->
+  <div id="modalEditFaculty" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 border border-slate-200 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+          <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i> Edit Faculty Details
+        </h3>
+        <button onclick="closeModal('modalEditFaculty')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveEditedFaculty(event)" class="mt-3 space-y-3 text-xs">
+        <input type="hidden" id="editFacultyId">
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Faculty Name</label>
+          <input type="text" id="editFacultyNameInput" required class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">Teaching Subjects (comma separated)</label>
+          <input type="text" id="editFacultySubsInput" placeholder="e.g. Mathematics, JEE Calculus" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeModal('modalEditFaculty')" class="px-3 py-1.5 font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow">Save Changes</button>
         </div>
       </form>
     </div>
@@ -1156,6 +1250,46 @@
           `;
         }
 
+        if (slot.type === 'exam') {
+          return `
+            <tr class="exam-row border-y border-rose-200 text-rose-950">
+              <td class="py-2.5 px-2 font-black text-rose-950 whitespace-nowrap">${timeStr}</td>
+              <td class="py-2.5 px-2">
+                <span class="exam-badge">EXAM</span>
+              </td>
+              <td class="py-2.5 px-2 font-black text-rose-900 text-xs">
+                ${escapeHTML(slot.label || 'Exam / Test Paper')}
+              </td>
+              <td class="py-2.5 px-2 text-right">
+                <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        }
+
+        if (slot.type === 'study') {
+          return `
+            <tr class="bg-purple-50/70 border-y border-purple-200 text-purple-950">
+              <td class="py-2.5 px-2 font-black text-slate-900 whitespace-nowrap">${timeStr}</td>
+              <td class="py-2.5 px-2">
+                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-purple-200 text-purple-900 border border-purple-300">
+                  STUDY
+                </span>
+              </td>
+              <td class="py-2.5 px-2 font-bold text-purple-900 text-xs">
+                ${escapeHTML(slot.label || 'Self-Study & DPP Practice')}
+              </td>
+              <td class="py-2.5 px-2 text-right">
+                <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        }
+
         const currentAssign = assigns[slot.id] || {};
         const selTeacherId = currentAssign.teacherId || '';
         const selSubject = currentAssign.subject || '';
@@ -1221,16 +1355,28 @@
       const subtext = document.getElementById('viewDisplaySubtext');
       const tbody = document.getElementById('viewTableBody');
 
-      if (badge) badge.innerText = `BATCH: ${className.toUpperCase()}`;
-      if (subtext) subtext.innerText = `Schedule Date: ${prettyDate}`;
+      if (badge) {
+        badge.innerText = `BATCH: ${className.toUpperCase()}`;
+        badge.className = "inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
+      }
+      if (subtext) {
+        subtext.innerText = `Schedule Date: ${prettyDate}`;
+        subtext.className = "text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1";
+      }
 
       // Fullscreen View Elements
       const fsBadge = document.getElementById('fsBadgeBatch');
       const fsDate = document.getElementById('fsDateDisplay');
       const fsTbody = document.getElementById('fsTableBody');
 
-      if (fsBadge) fsBadge.innerText = `BATCH: ${className.toUpperCase()}`;
-      if (fsDate) fsDate.innerText = `Schedule Date: ${prettyDate}`;
+      if (fsBadge) {
+        fsBadge.innerText = `BATCH: ${className.toUpperCase()}`;
+        fsBadge.className = "inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
+      }
+      if (fsDate) {
+        fsDate.innerText = `Schedule Date: ${prettyDate}`;
+        fsDate.className = "text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1";
+      }
 
       const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
       const slots = dailyData.slots || [];
@@ -1244,49 +1390,81 @@
         if (slot.type === 'recess') {
           return `
             <tr class="recess-row border-y border-amber-200">
-              <td class="py-2 sm:py-3 px-1.5 sm:px-3 font-extrabold text-amber-950 text-[9.5px] sm:text-xs leading-tight min-w-0">
-                <span class="inline-block break-words">${timeStr}</span>
+              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-amber-950 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+                ${timeStr}
               </td>
-              <td class="py-2 sm:py-3 px-1 sm:px-2 min-w-0">
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
                 <span class="recess-badge">RECESS</span>
               </td>
-              <td class="py-2 sm:py-3 px-1.5 sm:px-3 font-bold italic text-slate-700 text-[9.5px] sm:text-xs leading-tight min-w-0 break-words">
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 font-bold italic text-slate-700 text-[10px] sm:text-xs md:text-sm truncate">
                 ${escapeHTML(slot.label || 'Recess')}
               </td>
             </tr>
           `;
         }
 
-        // LECTURE & STUDY ROWS WITH COLOR CODING
+        // EXAM ROW
+        if (slot.type === 'exam') {
+          return `
+            <tr class="exam-row border-y border-rose-200 text-rose-950">
+              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-black text-rose-950 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+                ${timeStr}
+              </td>
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
+                <span class="exam-badge">EXAM</span>
+              </td>
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 font-black text-rose-900 text-[10px] sm:text-xs md:text-sm break-words">
+                ${escapeHTML(slot.label || 'Exam Paper')}
+              </td>
+            </tr>
+          `;
+        }
+
+        // STUDY SESSION ROW
+        if (slot.type === 'study') {
+          const theme = getSubjectColorTheme('', true);
+          return `
+            <tr class="border-b border-purple-100 ${theme.rowClass}">
+              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-slate-900 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+                ${timeStr}
+              </td>
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
+                <div class="teacher-pill ${theme.teacherClass}">
+                  <span class="${theme.diamondColor} text-[8px] sm:text-[10px]">&#9670;</span>
+                  <span class="truncate">Self-Study</span>
+                </div>
+              </td>
+              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
+                <div class="subject-pill ${theme.subjectClass}">
+                  ${escapeHTML(slot.label || 'DPP & Problem Solving')}
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+
+        // LECTURE ROW
         const assign = assigns[slot.id] || {};
         const teacherName = db.teachers.find(item => item.id === assign.teacherId)?.name;
-        const subjectName = assign.subject || (slot.type === 'study' ? (slot.label || 'Self-Study & Problem Solving') : '');
-        const theme = getSubjectColorTheme(subjectName, slot.type === 'study');
+        const subjectName = assign.subject;
+        const theme = getSubjectColorTheme(subjectName, false);
 
         return `
-          <tr class="border-b border-slate-100 transition-colors ${theme.rowClass}">
-            <!-- Time -->
-            <td class="py-2 sm:py-3 px-1.5 sm:px-3 font-extrabold text-slate-900 text-[9.5px] sm:text-xs leading-tight min-w-0">
-              <span class="inline-block break-words">${timeStr}</span>
+          <tr class="border-b border-slate-100 ${theme.rowClass}">
+            <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-slate-900 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+              ${timeStr}
             </td>
-            <!-- Teacher -->
-            <td class="py-2 sm:py-3 px-1 sm:px-2 min-w-0">
+            <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 min-w-0">
               ${teacherName ? `
                 <div class="teacher-pill ${theme.teacherClass}">
-                  <span class="${theme.diamondColor} text-[7.5px] sm:text-[9px] flex-shrink-0">&#9670;</span>
+                  <span class="${theme.diamondColor} text-[8px] sm:text-[10px] flex-shrink-0">&#9670;</span>
                   <span class="truncate">${escapeHTML(teacherName)}</span>
-                </div>
-              ` : slot.type === 'study' ? `
-                <div class="teacher-pill ${theme.teacherClass}">
-                  <span class="${theme.diamondColor} text-[7.5px] sm:text-[9px] flex-shrink-0">&#9670;</span>
-                  <span class="truncate">Self-Study</span>
                 </div>
               ` : `
                 <div class="empty-pill">&mdash;</div>
               `}
             </td>
-            <!-- Subject -->
-            <td class="py-2 sm:py-3 px-1.5 sm:px-3 min-w-0">
+            <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 min-w-0">
               ${subjectName ? `
                 <div class="subject-pill ${theme.subjectClass}">
                   ${escapeHTML(subjectName)}
@@ -1303,51 +1481,6 @@
       if (fsTbody) fsTbody.innerHTML = html;
 
       safeCreateIcons();
-    }
-
-    /* -------------------------------------------------------------
-       MUTATIONS & ACTIONS
-       ------------------------------------------------------------- */
-    function updateClassSlotTeacher(slotId, newTeacherId) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
-
-      dailyData.assignments[slotId].teacherId = newTeacherId;
-      const subs = getTeacherAssignedSubjects(newTeacherId);
-      dailyData.assignments[slotId].subject = subs.length > 0 ? subs[0] : '';
-
-      saveDatabase();
-      renderEditTimetable();
-      renderExactView();
-    }
-
-    function updateClassSlotSubject(slotId, newSubject) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
-
-      dailyData.assignments[slotId].subject = newSubject;
-      saveDatabase();
-      renderEditTimetable();
-      renderExactView();
-    }
-
-    function clearAllRowsForCurrentDay() {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      dailyData.assignments = {};
-      saveDatabase();
-      renderEditTimetable();
-      renderExactView();
-      showToast('Emptied all rows for this date', 'info');
-    }
-
-    function deleteSlotFromActiveDate(slotId) {
-      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
-      dailyData.slots = (dailyData.slots || []).filter(s => s.id !== slotId);
-      if (dailyData.assignments) delete dailyData.assignments[slotId];
-      saveDatabase();
-      renderEditTimetable();
-      renderExactView();
-      showToast('Slot removed', 'info');
     }
 
     function handleCreateNewSlot(e) {
@@ -1368,7 +1501,7 @@
         start,
         end,
         type,
-        label: label || (type === 'recess' ? 'Recess' : '')
+        label: label || (type === 'recess' ? 'Recess' : (type === 'exam' ? 'Test / Examination Paper' : (type === 'study' ? 'Self-Study & Problem Solving' : '')))
       });
 
       saveDatabase();
@@ -1376,6 +1509,24 @@
       renderEditTimetable();
       renderExactView();
       showToast('Slot added!', 'success');
+    }
+
+    function onAddSlotTypeChange(type) {
+      const labelInput = document.getElementById('addSlotLabel');
+      const labelTitle = document.getElementById('addSlotLabelTitle');
+      if (type === 'exam') {
+        if (labelTitle) labelTitle.innerText = 'Exam / Test Details';
+        if (labelInput) labelInput.placeholder = 'e.g. JEE Full Length Mock Test / Physics Unit Test';
+      } else if (type === 'study') {
+        if (labelTitle) labelTitle.innerText = 'Study Session Title / Topic';
+        if (labelInput) labelInput.placeholder = 'e.g. DPP Practice, Problem Solving, Doubt Clearing';
+      } else if (type === 'recess') {
+        if (labelTitle) labelTitle.innerText = 'Recess Label (Optional)';
+        if (labelInput) labelInput.placeholder = 'e.g. Recess Break';
+      } else {
+        if (labelTitle) labelTitle.innerText = 'Lecture Note (Optional)';
+        if (labelInput) labelInput.placeholder = 'e.g. Special Revision Lecture';
+      }
     }
 
     function executeCopySchedule() {
@@ -1410,13 +1561,50 @@
        ------------------------------------------------------------- */
     function downloadTimetablePNG() {
       showToast('Rendering high-resolution image...', 'info');
-      const element = document.getElementById('renderableContainer');
+      // If fullscreen modal is open, export the clean fullscreen area, else the regular preview container
+      const fsModal = document.getElementById('modalFullscreenTimetable');
+      const isFsOpen = fsModal && !fsModal.classList.contains('hidden');
+      const element = isFsOpen ? document.getElementById('fsRenderableArea') : document.getElementById('renderableContainer');
+
+      if (!element) {
+        showToast('Timetable container not found', 'error');
+        return;
+      }
+
+      // Map table theme classes to html2canvas-safe hex fallback gradients
+      const themeFallbackColors = {
+        'purple-cyan': ['#8b2cf5', '#2563eb', '#06b6d4'],
+        'aurora': ['#059669', '#0284c7', '#4f46e5'],
+        'sunset': ['#e11d48', '#ea580c', '#eab308'],
+        'crimson': ['#881337', '#be123c', '#fb7185'],
+        'emerald': ['#064e3b', '#059669', '#34d399'],
+        'cyberpunk': ['#c026d3', '#4338ca', '#06b6d4'],
+        'gold': ['#0f172a', '#334155', '#b45309'],
+        'slate': ['#1e293b', '#334155']
+      };
 
       html2canvas(element, {
-        scale: 2.5,
+        scale: 2,
         backgroundColor: '#ffffff',
         useCORS: true,
-        logging: false
+        logging: false,
+        onclone: (clonedDoc) => {
+          // Normalize header elements in the cloned DOM to prevent html2canvas NaN gradient calculation
+          const headerRows = clonedDoc.querySelectorAll('#viewTableHeaderRow, #fsTableHeaderRow, #mainTableHeaderRow');
+          const colors = themeFallbackColors[currentTableTheme] || themeFallbackColors['purple-cyan'];
+          const safeGradient = colors.length === 2 
+            ? `linear-gradient(to right, ${colors[0]}, ${colors[1]})`
+            : `linear-gradient(to right, ${colors[0]} 0%, ${colors[1]} 50%, ${colors[2]} 100%)`;
+
+          headerRows.forEach(row => {
+            row.style.background = safeGradient;
+            row.style.color = '#ffffff';
+            row.querySelectorAll('th').forEach(th => {
+              th.style.color = (currentTableTheme === 'gold') ? '#fef08a' : '#ffffff';
+              th.style.backgroundColor = 'transparent';
+            });
+          });
+        }
       }).then(canvas => {
         const dataUrl = canvas.toDataURL('image/png');
         const cls = db.classes.find(c => c.id === activeClassId);
@@ -1494,15 +1682,15 @@
     function toggleCleanScreenshotMode() {
       isPureScreenshot = !isPureScreenshot;
       const toolbar = document.getElementById('fsToolbar');
-      const unhideBtn = document.getElementById('fsUnhideBtn');
+      const bottomBar = document.getElementById('fsUnhideBottomBar');
 
       if (isPureScreenshot) {
         toolbar.classList.add('hidden');
-        unhideBtn.classList.remove('hidden');
+        bottomBar.classList.remove('hidden');
         showToast('UI hidden. Take your screenshot now!', 'info');
       } else {
         toolbar.classList.remove('hidden');
-        unhideBtn.classList.add('hidden');
+        bottomBar.classList.add('hidden');
       }
     }
 
@@ -1546,10 +1734,15 @@
       if (bList) {
         bList.innerHTML = db.classes.map(c => `
           <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-            <span class="font-bold text-slate-800">${c.name}</span>
-            <button onclick="handleDeleteBatch('${c.id}')" class="text-rose-500 hover:text-rose-700">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>
-            </button>
+            <span class="font-bold text-slate-800">${escapeHTML(c.name)}</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openEditBatchModal('${c.id}')" class="px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-1">
+                <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
+              </button>
+              <button onclick="handleDeleteBatch('${c.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
         `).join('');
       }
@@ -1559,16 +1752,76 @@
         tList.innerHTML = db.teachers.map(t => `
           <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs">
             <div>
-              <div class="font-bold text-slate-800">${t.name}</div>
-              <div class="text-[10px] text-slate-400">${t.subjects || 'General'}</div>
+              <div class="font-bold text-slate-800">${escapeHTML(t.name)}</div>
+              <div class="text-[10px] text-slate-400">${escapeHTML(t.subjects || 'General')}</div>
             </div>
-            <button onclick="handleDeleteFaculty('${t.id}')" class="text-rose-500 hover:text-rose-700">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button onclick="openEditFacultyModal('${t.id}')" class="px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-1">
+                <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
+              </button>
+              <button onclick="handleDeleteFaculty('${t.id}')" class="text-rose-500 hover:text-rose-700 p-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
         `).join('');
       }
       safeCreateIcons();
+    }
+
+    function openEditBatchModal(batchId) {
+      const cls = db.classes.find(c => c.id === batchId);
+      if (!cls) return;
+      document.getElementById('editBatchId').value = cls.id;
+      document.getElementById('editBatchNameInput').value = cls.name;
+      openModal('modalEditBatch');
+    }
+
+    function handleSaveEditedBatch(e) {
+      e.preventDefault();
+      const id = document.getElementById('editBatchId').value;
+      const name = document.getElementById('editBatchNameInput').value.trim();
+      if (!name) return;
+
+      const cls = db.classes.find(c => c.id === id);
+      if (cls) {
+        cls.name = name;
+        saveDatabase();
+        closeModal('modalEditBatch');
+        populateSelectors();
+        renderEditTimetable();
+        renderExactView();
+        showToast('Batch name updated!', 'success');
+      }
+    }
+
+    function openEditFacultyModal(facultyId) {
+      const t = db.teachers.find(item => item.id === facultyId);
+      if (!t) return;
+      document.getElementById('editFacultyId').value = t.id;
+      document.getElementById('editFacultyNameInput').value = t.name;
+      document.getElementById('editFacultySubsInput').value = t.subjects || '';
+      openModal('modalEditFaculty');
+    }
+
+    function handleSaveEditedFaculty(e) {
+      e.preventDefault();
+      const id = document.getElementById('editFacultyId').value;
+      const name = document.getElementById('editFacultyNameInput').value.trim();
+      const subs = document.getElementById('editFacultySubsInput').value.trim();
+      if (!name) return;
+
+      const t = db.teachers.find(item => item.id === id);
+      if (t) {
+        t.name = name;
+        t.subjects = subs || 'General';
+        saveDatabase();
+        closeModal('modalEditFaculty');
+        populateSelectors();
+        renderEditTimetable();
+        renderExactView();
+        showToast('Faculty updated!', 'success');
+      }
     }
 
     function handleAddBatch() {
