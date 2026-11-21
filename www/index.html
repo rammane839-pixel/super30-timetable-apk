@@ -288,38 +288,50 @@
       }
     }
 
-    /* Badges base styling */
+    /* Clean Unboxed Text Styling for All Badges (No Pill Boxes or Borders) */
     .recess-badge {
-      border-radius: 9999px;
-      padding: 3px 9px;
-      font-size: 10px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       display: inline-block;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      line-height: 1.25;
     }
 
     .study-badge {
-      border-radius: 9999px;
-      padding: 3px 9px;
-      font-size: 10px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       display: inline-block;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      line-height: 1.25;
     }
 
     .exam-badge {
-      border-radius: 9999px;
-      padding: 3px 9px;
-      font-size: 10px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       display: inline-block;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      line-height: 1.25;
+    }
+
+    @media (min-width: 640px) {
+      .recess-badge, .study-badge, .exam-badge {
+        font-size: 12px;
+      }
     }
 
     @media print {
@@ -1202,18 +1214,18 @@
             },
             recess: {
               row: 'bg-[#fef9c3] border-l-[5px] border-[#ca8a04]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#a7f3d0] border-l-[5px] border-[#059669]',
-              badge: 'bg-[#34d399] text-[#064e3b] border-[1.5px] border-[#059669]',
+              badge: 'text-[#065f46]',
               subjectPill: 'text-[#064e3b]',
               text: 'text-[#064e3b] font-black'
             },
             exam: {
               row: 'bg-[#fbcfe8] border-l-[5px] border-[#db2777]',
-              badge: 'bg-[#db2777] text-white border-[1.5px] border-[#be185d]',
+              badge: 'text-[#9d174d]',
               text: 'text-[#831843] font-black'
             }
           };
@@ -1228,18 +1240,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#eab308]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#d9f99d] border-l-[5px] border-[#65a30d]',
-              badge: 'bg-[#a3e635] text-[#365314] border-[1.5px] border-[#65a30d]',
+              badge: 'text-[#3f6212]',
               subjectPill: 'text-[#365314]',
               text: 'text-[#365314] font-black'
             },
             exam: {
               row: 'bg-[#fecdd3] border-l-[5px] border-[#e11d48]',
-              badge: 'bg-[#e11d48] text-white border-[1.5px] border-[#be123c]',
+              badge: 'text-[#9f1239]',
               text: 'text-[#881337] font-black'
             }
           };
@@ -1254,18 +1266,18 @@
             },
             recess: {
               row: 'bg-[#fef9c3] border-l-[5px] border-[#ca8a04]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#a7f3d0] border-l-[5px] border-[#059669]',
-              badge: 'bg-[#34d399] text-[#064e3b] border-[1.5px] border-[#059669]',
+              badge: 'text-[#065f46]',
               subjectPill: 'text-[#064e3b]',
               text: 'text-[#064e3b] font-black'
             },
             exam: {
               row: 'bg-[#fed7aa] border-l-[5px] border-[#c2410c]',
-              badge: 'bg-[#c2410c] text-white border-[1.5px] border-[#9a3412]',
+              badge: 'text-[#9a3412]',
               text: 'text-[#7c2d12] font-black'
             }
           };
@@ -1280,18 +1292,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#cffafe] border-l-[5px] border-[#0891b2]',
-              badge: 'bg-[#22d3ee] text-[#164e63] border-[1.5px] border-[#0891b2]',
+              badge: 'text-[#155e75]',
               subjectPill: 'text-[#164e63]',
               text: 'text-[#164e63] font-black'
             },
             exam: {
               row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
-              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              badge: 'text-[#9a3412]',
               text: 'text-[#7c2d12] font-black'
             }
           };
@@ -1306,18 +1318,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#eab308]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#a5f3fc] border-l-[5px] border-[#06b6d4]',
-              badge: 'bg-[#22d3ee] text-[#155e75] border-[1.5px] border-[#0891b2]',
+              badge: 'text-[#0e7490]',
               subjectPill: 'text-[#155e75]',
               text: 'text-[#155e75] font-black'
             },
             exam: {
               row: 'bg-[#fbcfe8] border-l-[5px] border-[#c026d3]',
-              badge: 'bg-[#c026d3] text-white border-[1.5px] border-[#a21caf]',
+              badge: 'text-[#86198f]',
               text: 'text-[#701a75] font-black'
             }
           };
@@ -1332,18 +1344,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#bbf7d0] border-l-[5px] border-[#15803d]',
-              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#15803d]',
+              badge: 'text-[#14532d]',
               subjectPill: 'text-[#14532d]',
               text: 'text-[#14532d] font-black'
             },
             exam: {
               row: 'bg-[#ffedd5] border-l-[5px] border-[#ea580c]',
-              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              badge: 'text-[#9a3412]',
               text: 'text-[#7c2d12] font-black'
             }
           };
@@ -1358,18 +1370,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#ca8a04]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#bbf7d0] border-l-[5px] border-[#16a34a]',
-              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#16a34a]',
+              badge: 'text-[#15803d]',
               subjectPill: 'text-[#14532d]',
               text: 'text-[#14532d] font-black'
             },
             exam: {
               row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
-              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              badge: 'text-[#9a3412]',
               text: 'text-[#7c2d12] font-black'
             }
           };
@@ -1385,18 +1397,18 @@
             },
             recess: {
               row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
-              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              badge: 'text-[#854d0e]',
               text: 'text-[#713f12] font-black'
             },
             study: {
               row: 'bg-[#bbf7d0] border-l-[5px] border-[#16a34a]',
-              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#16a34a]',
+              badge: 'text-[#15803d]',
               subjectPill: 'text-[#14532d]',
               text: 'text-[#14532d] font-black'
             },
             exam: {
               row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
-              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              badge: 'text-[#9a3412]',
               text: 'text-[#7c2d12] font-black'
             }
           };
@@ -1439,7 +1451,7 @@
           return `
             <tr class="${themeColors.recess.row} border-y">
               <td class="py-2.5 px-2 font-bold ${themeColors.recess.text} whitespace-nowrap">${timeStr}</td>
-              <td class="py-2.5 px-2"><span class="${themeColors.recess.badge}">RECESS</span></td>
+              <td class="py-2.5 px-2"><span class="recess-badge ${themeColors.recess.badge}">RECESS</span></td>
               <td class="py-2.5 px-2 italic font-bold ${themeColors.recess.text} text-xs">${escapeHTML(slot.label || 'Recess')}</td>
               <td class="py-2.5 px-2 text-right">
                 <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="text-rose-500 hover:text-rose-700 p-1">
@@ -1455,7 +1467,7 @@
             <tr class="${themeColors.exam.row} border-y ${themeColors.exam.text}">
               <td class="py-2.5 px-2 font-black ${themeColors.exam.text} whitespace-nowrap">${timeStr}</td>
               <td class="py-2.5 px-2">
-                <span class="${themeColors.exam.badge}">EXAM</span>
+                <span class="exam-badge ${themeColors.exam.badge}">EXAM</span>
               </td>
               <td class="py-2.5 px-2 font-black ${themeColors.exam.text} text-xs">
                 ${escapeHTML(slot.label || 'Exam / Test Paper')}
@@ -1474,7 +1486,7 @@
             <tr class="${themeColors.study.row} border-y">
               <td class="py-2.5 px-2 font-black ${themeColors.study.text || 'text-slate-900'} whitespace-nowrap">${timeStr}</td>
               <td class="py-2.5 px-2">
-                <span class="${themeColors.study.badge}">STUDY</span>
+                <span class="study-badge ${themeColors.study.badge}">STUDY</span>
               </td>
               <td class="py-2.5 px-2 font-bold ${themeColors.study.text || 'text-slate-900'} text-xs">
                 ${escapeHTML(slot.label || 'Self-Study & DPP Practice')}
@@ -1595,7 +1607,7 @@
       const html = sortedSlots.map(slot => {
         const timeStr = formatSlotRange(slot.start, slot.end);
 
-        // 1. RECESS ROW (Harmonized with table theme)
+        // 1. RECESS ROW (Harmonized with table theme, no box)
         if (slot.type === 'recess') {
           return `
             <tr class="${themeColors.recess.row} border-b">
@@ -1603,7 +1615,7 @@
                 ${timeStr}
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
-                <span class="${themeColors.recess.badge}">RECESS</span>
+                <span class="recess-badge ${themeColors.recess.badge}">RECESS</span>
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 font-bold italic ${themeColors.recess.text} text-[10px] sm:text-xs md:text-sm truncate">
                 ${escapeHTML(slot.label || 'Recess')}
@@ -1612,7 +1624,7 @@
           `;
         }
 
-        // 2. EXAM ROW (Harmonized with table theme)
+        // 2. EXAM ROW (Harmonized with table theme, no box)
         if (slot.type === 'exam') {
           return `
             <tr class="${themeColors.exam.row} border-b ${themeColors.exam.text}">
@@ -1620,7 +1632,7 @@
                 ${timeStr}
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
-                <span class="${themeColors.exam.badge}">EXAM</span>
+                <span class="exam-badge ${themeColors.exam.badge}">EXAM</span>
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 font-black ${themeColors.exam.text} text-[10px] sm:text-xs md:text-sm break-words">
                 ${escapeHTML(slot.label || 'Exam Paper')}
@@ -1629,7 +1641,7 @@
           `;
         }
 
-        // 3. STUDY SESSION ROW (Harmonized with table theme)
+        // 3. STUDY SESSION ROW (Harmonized with table theme, no box)
         if (slot.type === 'study') {
           return `
             <tr class="${themeColors.study.row} border-b">
@@ -1637,7 +1649,7 @@
                 ${timeStr}
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
-                <span class="${themeColors.study.badge}">STUDY</span>
+                <span class="study-badge ${themeColors.study.badge}">STUDY</span>
               </td>
               <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
                 <div class="subject-pill ${themeColors.study.subjectPill}">
@@ -1648,7 +1660,7 @@
           `;
         }
 
-        // 4. LECTURE ROW (Harmonized with table theme)
+        // 4. LECTURE ROW (Harmonized with table theme, no box)
         const assign = assigns[slot.id] || {};
         const teacherName = db.teachers.find(item => item.id === assign.teacherId)?.name;
         const subjectName = assign.subject;
@@ -2318,40 +2330,6 @@
       saveDatabase();
 
       // Only re-renders the timetable rows and headers
-      renderEditTimetable();
-      renderExactView();
-
-      showToast(`Table theme updated!`, 'success');
-    }
-
-    function changeTableTheme(themeName) {
-      currentTableTheme = themeName;
-      const themeClass = `table-theme-${themeName}`;
-
-      const headerIds = ['mainTableHeaderRow', 'viewTableHeaderRow', 'fsTableHeaderRow'];
-      const themeClasses = [
-        'table-theme-purple-cyan', 'table-theme-aurora', 'table-theme-sunset',
-        'table-theme-crimson', 'table-theme-emerald', 'table-theme-cyberpunk',
-        'table-theme-gold', 'table-theme-slate'
-      ];
-
-      headerIds.forEach(id => {
-        const row = document.getElementById(id);
-        if (row) {
-          themeClasses.forEach(cls => row.classList.remove(cls));
-          row.classList.add(themeClass);
-        }
-      });
-
-      const editSelect = document.getElementById('editTableThemeSelect');
-      const settingsTableSelect = document.getElementById('settingsTableThemeSelect');
-      if (editSelect) editSelect.value = themeName;
-      if (settingsTableSelect) settingsTableSelect.value = themeName;
-
-      db.tableTheme = themeName;
-      saveDatabase();
-
-      // Immediately re-render both the editor and the preview/fullscreen tables so the row background colors update instantly
       renderEditTimetable();
       renderExactView();
 
