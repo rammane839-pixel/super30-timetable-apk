@@ -686,7 +686,7 @@
     <!-- Floating Toolbar (Hidable for pure screenshot capture) -->
     <div id="fsToolbar" class="p-2.5 sm:p-3 bg-slate-900 text-white flex items-center justify-between gap-2 shadow-md z-20">
       <div class="flex items-center gap-2">
-        <button onclick="closeModal('modalFullscreenTimetable')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-700">
+        <button onclick="closeFullscreenModal()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-700">
           <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
           <span>Back</span>
         </button>
@@ -1921,12 +1921,53 @@
     /* -------------------------------------------------------------
        FULLSCREEN CLEAN SCREENSHOT MODE
        ------------------------------------------------------------- */
+    function requestBrowserFullscreen(element) {
+      if (!element) return;
+      try {
+        if (element.requestFullscreen) {
+          element.requestFullscreen().catch(() => {});
+        } else if (element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+          element.msRequestFullscreen();
+        }
+      } catch (e) {
+        console.warn('Browser fullscreen request ignored:', e);
+      }
+    }
+
+    function exitBrowserFullscreen() {
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      } catch (e) {
+        console.warn('Exit fullscreen ignored:', e);
+      }
+    }
+
     function openFullscreenTimetable() {
       // Guarantee both views are freshly synced with database before opening
       renderEditTimetable();
       renderExactView();
       openModal('modalFullscreenTimetable');
-      showToast('Clean view loaded for mobile screenshot!', 'info');
+      
+      const modalEl = document.getElementById('modalFullscreenTimetable');
+      requestBrowserFullscreen(modalEl);
+
+      showToast('Clean view loaded! Use "Save PNG" or "Hide UI" for clean screenshot', 'info');
+    }
+
+    function closeFullscreenModal() {
+      exitBrowserFullscreen();
+      if (isPureScreenshot) {
+        toggleCleanScreenshotMode();
+      }
+      closeModal('modalFullscreenTimetable');
     }
 
     let isPureScreenshot = false;
@@ -1934,11 +1975,13 @@
       isPureScreenshot = !isPureScreenshot;
       const toolbar = document.getElementById('fsToolbar');
       const bottomBar = document.getElementById('fsUnhideBottomBar');
+      const modalEl = document.getElementById('modalFullscreenTimetable');
 
       if (isPureScreenshot) {
         toolbar.classList.add('hidden');
         bottomBar.classList.remove('hidden');
-        showToast('UI hidden. Take your screenshot now!', 'info');
+        requestBrowserFullscreen(modalEl);
+        showToast('System bars & UI hidden. Take your screenshot!', 'info');
       } else {
         toolbar.classList.remove('hidden');
         bottomBar.classList.add('hidden');
