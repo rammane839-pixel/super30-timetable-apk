@@ -40,13 +40,45 @@
     body {
       background-color: var(--bg-body);
       font-family: 'Plus Jakarta Sans', sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.3s ease, background 0.3s ease, color 0.3s ease;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* App View Themes - Native Backgrounds */
+    /* ============================================================== */
+    /* APP VIEW THEMES (PLAIN & GRADIENT) - ISOLATED FROM TABLE THEME */
+    /* ============================================================== */
+    
+    /* 1. PLAIN SOLIDS */
+    body[data-app-theme="light"] {
+      --bg-body: #f8fafc;
+      background: #f8fafc !important;
+      color: #0f172a;
+    }
+
+    body[data-app-theme="cream"] {
+      --bg-body: #fefce8;
+      background: #fefce8 !important;
+      color: #451a03;
+    }
+    body[data-app-theme="cream"] .bg-white {
+      background-color: #ffffff !important;
+      border-color: #fef08a !important;
+    }
+
+    body[data-app-theme="slate"] {
+      --bg-body: #1e293b;
+      background: #1e293b !important;
+      color: #f1f5f9;
+    }
+    body[data-app-theme="slate"] .bg-white {
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f1f5f9 !important;
+    }
+
     body[data-app-theme="midnight"] {
       --bg-body: #0b0f19;
+      background: #0b0f19 !important;
       color: #f1f5f9;
     }
     body[data-app-theme="midnight"] .bg-white {
@@ -75,23 +107,9 @@
       color: #f8fafc !important;
     }
 
-    body[data-app-theme="navy"] {
-      --bg-body: #07152e;
-      color: #f1f5f9;
-    }
-    body[data-app-theme="navy"] .bg-white {
-      background-color: #0f2042 !important;
-      border-color: #1e3a8a !important;
-      color: #f1f5f9 !important;
-    }
-    body[data-app-theme="navy"] .bg-slate-50 {
-      background-color: #132b59 !important;
-      border-color: #1e3a8a !important;
-      color: #f8fafc !important;
-    }
-
     body[data-app-theme="obsidian"] {
-      --bg-body: #030712;
+      --bg-body: #000000;
+      background: #000000 !important;
       color: #f9fafb;
     }
     body[data-app-theme="obsidian"] .bg-white {
@@ -105,28 +123,75 @@
       color: #f9fafb !important;
     }
 
-    body[data-app-theme="slate"] {
-      --bg-body: #1e293b;
-      color: #f1f5f9;
+    /* 2. GRADIENT APP THEMES */
+    body[data-app-theme="grad-royal"] {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
+      background-attachment: fixed !important;
+      color: #f8fafc;
     }
-    body[data-app-theme="slate"] .bg-white {
+    body[data-app-theme="grad-royal"] .bg-white {
       background-color: #0f172a !important;
-      border-color: #334155 !important;
-      color: #f1f5f9 !important;
+      border-color: #312e81 !important;
+      color: #f8fafc !important;
+    }
+    body[data-app-theme="grad-royal"] .bg-slate-50 {
+      background-color: #1e1b4b !important;
+      border-color: #3730a3 !important;
+      color: #f8fafc !important;
     }
 
-    body[data-app-theme="light"] {
-      --bg-body: #f8fafc;
+    body[data-app-theme="grad-aurora"] {
+      background: linear-gradient(135deg, #022c22 0%, #0f172a 50%, #082f49 100%) !important;
+      background-attachment: fixed !important;
+      color: #f0fdfa;
+    }
+    body[data-app-theme="grad-aurora"] .bg-white {
+      background-color: #064e3b !important;
+      border-color: #047857 !important;
+      color: #f0fdfa !important;
+    }
+    body[data-app-theme="grad-aurora"] .bg-slate-50 {
+      background-color: #022c22 !important;
+      border-color: #059669 !important;
+      color: #f0fdfa !important;
+    }
+
+    body[data-app-theme="grad-sunset"] {
+      background: linear-gradient(135deg, #450a0a 0%, #18181b 50%, #431407 100%) !important;
+      background-attachment: fixed !important;
+      color: #fff7ed;
+    }
+    body[data-app-theme="grad-sunset"] .bg-white {
+      background-color: #27272a !important;
+      border-color: #7c2d12 !important;
+      color: #fff7ed !important;
+    }
+    body[data-app-theme="grad-sunset"] .bg-slate-50 {
+      background-color: #3f3f46 !important;
+      border-color: #9a3412 !important;
+      color: #fff7ed !important;
+    }
+
+    body[data-app-theme="grad-cyber"] {
+      background: linear-gradient(135deg, #2e1065 0%, #09090b 50%, #034f59 100%) !important;
+      background-attachment: fixed !important;
+      color: #faf5ff;
+    }
+    body[data-app-theme="grad-cyber"] .bg-white {
+      background-color: #18181b !important;
+      border-color: #581c87 !important;
+      color: #faf5ff !important;
+    }
+    body[data-app-theme="grad-cyber"] .bg-slate-50 {
+      background-color: #27272a !important;
+      border-color: #7e22ce !important;
+      color: #faf5ff !important;
+    }
+
+    body[data-app-theme="grad-softblue"] {
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 50%, #e0e7ff 100%) !important;
+      background-attachment: fixed !important;
       color: #0f172a;
-    }
-
-    body[data-app-theme="cream"] {
-      --bg-body: #fefce8;
-      color: #451a03;
-    }
-    body[data-app-theme="cream"] .bg-white {
-      background-color: #ffffff !important;
-      border-color: #fef08a !important;
     }
 
     /* Table-Only Theme Gradients (html2canvas-safe standard directional gradients) */
@@ -172,161 +237,89 @@
       color: #ffffff !important;
     }
 
-    /* Pill Badges - Responsive & Overflow Protected */
+    /* Clean Text Formatting for Teacher & Subject (No Boxes or Outlines) */
     .teacher-pill {
-      background-color: #f1f5f9;
-      color: #0f172a;
-      border-radius: 6px;
-      padding: 3px 6px;
-      font-weight: 700;
-      font-size: 10px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      font-weight: 800;
+      font-size: 11px;
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       max-width: 100%;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .subject-pill {
-      background-color: #f1f5f9;
-      color: #0f172a;
-      border-radius: 6px;
-      padding: 3px 6px;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
       font-weight: 800;
-      font-size: 10px;
+      font-size: 11px;
       display: inline-block;
-      line-height: 1.2;
+      line-height: 1.25;
       max-width: 100%;
       word-break: break-word;
     }
 
     .empty-pill {
-      background-color: #f1f5f9;
+      background: transparent !important;
       color: #94a3b8;
-      border-radius: 6px;
-      padding: 3px 8px;
+      border: none !important;
+      padding: 0 !important;
       font-weight: 800;
-      font-size: 10px;
+      font-size: 11px;
       display: inline-block;
     }
 
     @media (min-width: 640px) {
       .teacher-pill {
-        font-size: 12px;
-        padding: 5px 12px;
-        border-radius: 10px;
+        font-size: 13px;
         gap: 6px;
       }
       .subject-pill {
-        font-size: 12px;
-        padding: 5px 12px;
-        border-radius: 10px;
+        font-size: 13px;
       }
       .empty-pill {
         font-size: 13px;
-        padding: 5px 16px;
       }
     }
 
-    /* Distinct Subject Theme Accents for Lectures */
-    .lecture-math-teacher {
-      background-color: #eff6ff !important;
-      color: #1e40af !important;
-      border: 1px solid #bfdbfe !important;
-    }
-    .lecture-math-subject {
-      background-color: #dbeafe !important;
-      color: #1e3a8a !important;
-      border: 1px solid #93c5fd !important;
-    }
-
-    .lecture-physics-teacher {
-      background-color: #ecfdf5 !important;
-      color: #065f46 !important;
-      border: 1px solid #a7f3d0 !important;
-    }
-    .lecture-physics-subject {
-      background-color: #d1fae5 !important;
-      color: #064e3b !important;
-      border: 1px solid #6ee7b7 !important;
-    }
-
-    .lecture-chem-teacher {
-      background-color: #f5f3ff !important;
-      color: #5b21b6 !important;
-      border: 1px solid #ddd6fe !important;
-    }
-    .lecture-chem-subject {
-      background-color: #ede9fe !important;
-      color: #4c1d95 !important;
-      border: 1px solid #c4b5fd !important;
-    }
-
-    .lecture-bio-teacher {
-      background-color: #fff1f2 !important;
-      color: #9f1239 !important;
-      border: 1px solid #fecdd3 !important;
-    }
-    .lecture-bio-subject {
-      background-color: #ffe4e6 !important;
-      color: #881337 !important;
-      border: 1px solid #fda4af !important;
-    }
-
-    .lecture-study-teacher {
-      background-color: #faf5ff !important;
-      color: #6b21a8 !important;
-      border: 1px solid #e9d5ff !important;
-    }
-    .lecture-study-subject {
-      background-color: #f3e8ff !important;
-      color: #581c87 !important;
-      border: 1px solid #d8b4fe !important;
-    }
-
-    .lecture-default-teacher {
-      background-color: #f0fdf4 !important;
-      color: #15803d !important;
-      border: 1px solid #bbf7d0 !important;
-    }
-    .lecture-default-subject {
-      background-color: #e0f2fe !important;
-      color: #0369a1 !important;
-      border: 1px solid #bae6fd !important;
-    }
-
-    /* Recess styling */
-    .recess-row {
-      background-color: #fefce8 !important;
-    }
+    /* Badges base styling */
     .recess-badge {
-      background-color: #fde047;
-      color: #713f12;
       border-radius: 9999px;
-      padding: 2px 8px;
+      padding: 3px 9px;
       font-size: 10px;
       font-weight: 900;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       display: inline-block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     }
 
-    /* Exam slot styling */
-    .exam-row {
-      background-color: #fff1f2 !important;
-      border-left: 3px solid #e11d48 !important;
-    }
-    .exam-badge {
-      background-color: #ffe4e6;
-      color: #be123c;
-      border: 1px solid #f43f5e;
+    .study-badge {
       border-radius: 9999px;
-      padding: 2px 8px;
+      padding: 3px 9px;
       font-size: 10px;
       font-weight: 900;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       display: inline-block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .exam-badge {
+      border-radius: 9999px;
+      padding: 3px 9px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
     @media print {
@@ -375,6 +368,19 @@
 
       <!-- Quick Action Buttons -->
       <div class="flex items-center gap-1.5">
+        <!-- App Theme Quick Switcher -->
+        <select id="quickAppThemeSelect" onchange="changeAppTheme(this.value)" class="text-[11px] font-bold px-2 py-1.5 rounded-xl bg-slate-100 border border-slate-200 outline-none text-slate-700 hidden sm:inline-block" title="Change App Background Theme">
+          <option value="light">Plain: Light</option>
+          <option value="midnight">Plain: Midnight</option>
+          <option value="slate">Plain: Slate</option>
+          <option value="obsidian">Plain: Obsidian</option>
+          <option value="cream">Plain: Cream</option>
+          <option value="grad-royal">Grad: Royal Blue</option>
+          <option value="grad-aurora">Grad: Aurora Teal</option>
+          <option value="grad-sunset">Grad: Sunset Amber</option>
+          <option value="grad-cyber">Grad: Cyber Violet</option>
+          <option value="grad-softblue">Grad: Soft Sky</option>
+        </select>
         <button onclick="openFullscreenTimetable()" class="px-2.5 py-1.5 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-sm">
           <i data-lucide="eye" class="w-3.5 h-3.5"></i>
           <span class="hidden xs:inline">View</span>
@@ -533,27 +539,28 @@
       <div id="print-area" class="w-full bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div id="renderableContainer" class="p-4 sm:p-6 bg-white flex flex-col justify-between">
 
-          <!-- HEADER -->
-          <div class="pb-2.5 mb-2 flex flex-col xs:flex-row xs:items-center justify-between gap-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
-              <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-700 flex items-center justify-center text-amber-300 font-black text-xs sm:text-base shadow flex-shrink-0 aspect-square">
+          <!-- HEADER (Batch & Date stacked directly below Academy Name) -->
+          <div class="pb-3 mb-2 flex flex-col items-center text-center gap-2 border-b border-slate-100">
+            <div class="flex items-center justify-center gap-2.5">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-700 flex items-center justify-center text-amber-300 font-black text-sm sm:text-base shadow flex-shrink-0 aspect-square">
                 S30
               </div>
-              <div class="min-w-0">
-                <h1 class="text-xs sm:text-base font-black text-slate-950 uppercase font-display leading-tight truncate">
+              <div class="text-left">
+                <h1 class="text-sm sm:text-lg font-black text-slate-950 uppercase font-display leading-tight">
                   SUPER 30 ACADEMY, KARAD
                 </h1>
-                <p class="text-[8.5px] sm:text-xs text-blue-600 font-black uppercase tracking-wide truncate">
+                <p class="text-[9.5px] sm:text-xs text-blue-600 font-black uppercase tracking-wide">
                   SMART TIMETABLE &bull; CREATED BY RAM SIR
                 </p>
               </div>
             </div>
 
-            <div class="text-left xs:text-right flex-shrink-0">
-              <div id="viewDisplayBadge" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
+            <!-- Batch & Date positioned directly below -->
+            <div class="flex flex-col items-center justify-center gap-1 mt-0.5">
+              <div id="viewDisplayBadge" class="inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm md:text-base font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
                 BATCH: CLASS 11 - JEE ADVANCED
               </div>
-              <div class="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1" id="viewDisplaySubtext">
+              <div class="text-xs sm:text-sm font-extrabold text-slate-800" id="viewDisplaySubtext">
                 Schedule Date: Fri, 20 Nov, 2026
               </div>
             </div>
@@ -595,29 +602,41 @@
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
         <h3 class="text-xs font-black uppercase text-slate-700 flex items-center gap-1.5">
           <i data-lucide="palette" class="w-4 h-4 text-indigo-600"></i>
-          <span>Appearance & Color Themes</span>
+          <span>Appearance & Color Themes (Separate Controls)</span>
         </h3>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">
-              App Background Theme
+          <!-- 1. APP THEME ONLY -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <label class="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1">
+              1. App View Theme (Body & Atmosphere)
             </label>
-            <select id="settingsAppThemeSelect" onchange="changeAppTheme(this.value)" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="light">☀️ Minimalist Light (Default)</option>
-              <option value="midnight">🌙 Midnight Dark</option>
-              <option value="navy">🌌 Deep Navy</option>
-              <option value="obsidian">🖤 Obsidian AMOLED</option>
-              <option value="slate">🧱 Slate Gray</option>
-              <option value="cream">📜 Soft Warm Cream</option>
+            <p class="text-[10px] text-slate-400 mb-2">Changes the app layout & background without altering table colors.</p>
+            <select id="settingsAppThemeSelect" onchange="changeAppTheme(this.value)" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+              <optgroup label="Plain Solids">
+                <option value="light">☀️ Minimalist Light Solid (Default)</option>
+                <option value="slate">🧱 Slate Gray Solid</option>
+                <option value="midnight">🌙 Midnight Dark Solid</option>
+                <option value="obsidian">🖤 Obsidian Pitch Black Solid</option>
+                <option value="cream">📜 Warm Cream Ivory Solid</option>
+              </optgroup>
+              <optgroup label="Modern Gradients">
+                <option value="grad-royal">🌌 Royal Navy Gradient</option>
+                <option value="grad-aurora">🌲 Aurora Emerald Teal Gradient</option>
+                <option value="grad-sunset">🌅 Sunset Amber Gradient</option>
+                <option value="grad-cyber">🔮 Cyber Violet Gradient</option>
+                <option value="grad-softblue">❄️ Soft Sky Light Gradient</option>
+              </optgroup>
             </select>
           </div>
 
-          <div>
-            <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">
-              Table Header Theme (Image & Print)
+          <!-- 2. TABLE THEME ONLY -->
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <label class="block text-[11px] font-black text-slate-700 uppercase tracking-wider mb-1">
+              2. Table Theme (Timetable & Exports Only)
             </label>
-            <select id="settingsTableThemeSelect" onchange="changeTableTheme(this.value)" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500">
+            <p class="text-[10px] text-slate-400 mb-2">Controls timetable header gradient, rows, and export card colors.</p>
+            <select id="settingsTableThemeSelect" onchange="changeTableTheme(this.value)" class="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500">
               <option value="purple-cyan">Purple • Blue • Cyan (Default)</option>
               <option value="aurora">Aurora Borealis (Teal • Azure)</option>
               <option value="sunset">Solar Sunset (Rose • Orange)</option>
@@ -689,28 +708,29 @@
     <!-- The Entire Printable/Renderable Canvas Area -->
     <div id="fsRenderableArea" class="flex-1 w-full bg-white p-2.5 sm:p-6 flex flex-col justify-between overflow-y-auto">
       
-      <!-- Top Letterhead -->
+      <!-- Top Letterhead (Batch & Date stacked directly below Academy Name) -->
       <div>
-        <div class="pb-2 mb-2 border-b-2 border-slate-200 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-700 flex items-center justify-center text-amber-300 font-black text-xs sm:text-base shadow flex-shrink-0 aspect-square">
+        <div class="pb-2.5 mb-2 border-b-2 border-slate-200 flex flex-col items-center text-center gap-2">
+          <div class="flex items-center justify-center gap-2.5">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-700 flex items-center justify-center text-amber-300 font-black text-sm sm:text-base shadow flex-shrink-0 aspect-square">
               S30
             </div>
-            <div class="min-w-0">
-              <h1 class="text-[11px] sm:text-base font-black text-slate-950 uppercase font-display leading-tight truncate">
+            <div class="text-left">
+              <h1 class="text-sm sm:text-lg font-black text-slate-950 uppercase font-display leading-tight">
                 SUPER 30 ACADEMY, KARAD
               </h1>
-              <p class="text-[8px] sm:text-xs text-blue-600 font-black uppercase tracking-wide truncate">
+              <p class="text-[9.5px] sm:text-xs text-blue-600 font-black uppercase tracking-wide">
                 SMART TIMETABLE &bull; CREATED BY RAM SIR
               </p>
             </div>
           </div>
 
-          <div class="text-right flex-shrink-0">
-            <div id="fsBadgeBatch" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
+          <!-- Batch & Date stacked directly underneath -->
+          <div class="flex flex-col items-center justify-center gap-1 mt-0.5">
+            <div id="fsBadgeBatch" class="inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm md:text-base font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm">
               BATCH: CLASS 11 - JEE ADVANCED
             </div>
-            <div class="text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1" id="fsDateDisplay">
+            <div class="text-xs sm:text-sm font-extrabold text-slate-800" id="fsDateDisplay">
               Schedule Date: Fri, 20 Nov, 2026
             </div>
           </div>
@@ -741,11 +761,10 @@
 
     </div>
 
-    <!-- Floating bottom unhide bar when in pure screenshot mode (Unobtrusive) -->
+    <!-- Floating bottom unhide arrow when in pure screenshot mode -->
     <div id="fsUnhideBottomBar" class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 hidden no-print">
-      <button onclick="toggleCleanScreenshotMode()" class="px-4 py-2 bg-slate-900/90 hover:bg-slate-950 text-white font-bold text-xs rounded-full shadow-2xl border border-slate-700 backdrop-blur-md flex items-center gap-1.5 transition">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-amber-400"></i>
-        <span>Exit Screenshot View</span>
+      <button onclick="toggleCleanScreenshotMode()" title="Exit Screenshot View" aria-label="Exit Screenshot View" class="w-10 h-10 bg-slate-900/80 hover:bg-slate-950 text-white rounded-full shadow-2xl border border-slate-700 backdrop-blur-md flex items-center justify-center transition active:scale-95">
+        <i data-lucide="arrow-left" class="w-5 h-5 text-amber-400"></i>
       </button>
     </div>
   </div>
@@ -1116,6 +1135,17 @@
       showToast(`Schedule loaded for ${getPrettyDate(newDate)}`, 'info');
     }
 
+    function syncBatch(newClassId) {
+      activeClassId = newClassId;
+      const editSelect = document.getElementById('editClassSelect');
+      const viewSelect = document.getElementById('viewClassSelect');
+      if (editSelect) editSelect.value = newClassId;
+      if (viewSelect) viewSelect.value = newClassId;
+
+      renderEditTimetable();
+      renderExactView();
+    }
+
     function checkTeacherConflict(teacherId, targetSlot, currentClassId) {
       if (!teacherId) return { available: true };
       const startMin = timeToMinutes(targetSlot.start);
@@ -1156,52 +1186,221 @@
       return t.subjects.split(',').map(s => s.trim()).filter(Boolean);
     }
 
-    // Color theme helper function for lecture cards
-    function getSubjectColorTheme(subjectName, isStudy = false) {
-      if (isStudy) {
-        return {
-          teacherClass: 'lecture-study-teacher',
-          subjectClass: 'lecture-study-subject',
-          diamondColor: 'text-purple-600',
-          rowClass: 'hover:bg-purple-50/40'
-        };
+    // Dynamic Theme Helper for all 4 Category Rows (Lecture, Recess, Study, Exam)
+    // High-contrast color combinations so each type is immediately distinguishable & theme-aligned
+    function getThemeRowClasses() {
+      const theme = currentTableTheme || 'purple-cyan';
+      switch (theme) {
+        case 'aurora':
+          return {
+            lecture: {
+              row: 'bg-[#ccfbf1] border-l-[5px] border-[#0d9488]',
+              teacher: 'text-[#0f766e]',
+              subject: 'text-[#134e4a]',
+              diamond: 'text-[#0d9488]',
+              text: 'text-[#134e4a] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef9c3] border-l-[5px] border-[#ca8a04]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#a7f3d0] border-l-[5px] border-[#059669]',
+              badge: 'bg-[#34d399] text-[#064e3b] border-[1.5px] border-[#059669]',
+              subjectPill: 'text-[#064e3b]',
+              text: 'text-[#064e3b] font-black'
+            },
+            exam: {
+              row: 'bg-[#fbcfe8] border-l-[5px] border-[#db2777]',
+              badge: 'bg-[#db2777] text-white border-[1.5px] border-[#be185d]',
+              text: 'text-[#831843] font-black'
+            }
+          };
+        case 'sunset':
+          return {
+            lecture: {
+              row: 'bg-[#ffedd5] border-l-[5px] border-[#ea580c]',
+              teacher: 'text-[#c2410c]',
+              subject: 'text-[#7c2d12]',
+              diamond: 'text-[#ea580c]',
+              text: 'text-[#7c2d12] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#eab308]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#d9f99d] border-l-[5px] border-[#65a30d]',
+              badge: 'bg-[#a3e635] text-[#365314] border-[1.5px] border-[#65a30d]',
+              subjectPill: 'text-[#365314]',
+              text: 'text-[#365314] font-black'
+            },
+            exam: {
+              row: 'bg-[#fecdd3] border-l-[5px] border-[#e11d48]',
+              badge: 'bg-[#e11d48] text-white border-[1.5px] border-[#be123c]',
+              text: 'text-[#881337] font-black'
+            }
+          };
+        case 'crimson':
+          return {
+            lecture: {
+              row: 'bg-[#ffe4e6] border-l-[5px] border-[#e11d48]',
+              teacher: 'text-[#be123c]',
+              subject: 'text-[#881337]',
+              diamond: 'text-[#e11d48]',
+              text: 'text-[#881337] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef9c3] border-l-[5px] border-[#ca8a04]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#a7f3d0] border-l-[5px] border-[#059669]',
+              badge: 'bg-[#34d399] text-[#064e3b] border-[1.5px] border-[#059669]',
+              subjectPill: 'text-[#064e3b]',
+              text: 'text-[#064e3b] font-black'
+            },
+            exam: {
+              row: 'bg-[#fed7aa] border-l-[5px] border-[#c2410c]',
+              badge: 'bg-[#c2410c] text-white border-[1.5px] border-[#9a3412]',
+              text: 'text-[#7c2d12] font-black'
+            }
+          };
+        case 'emerald':
+          return {
+            lecture: {
+              row: 'bg-[#d1fae5] border-l-[5px] border-[#059669]',
+              teacher: 'text-[#047857]',
+              subject: 'text-[#064e3b]',
+              diamond: 'text-[#059669]',
+              text: 'text-[#064e3b] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#cffafe] border-l-[5px] border-[#0891b2]',
+              badge: 'bg-[#22d3ee] text-[#164e63] border-[1.5px] border-[#0891b2]',
+              subjectPill: 'text-[#164e63]',
+              text: 'text-[#164e63] font-black'
+            },
+            exam: {
+              row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
+              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              text: 'text-[#7c2d12] font-black'
+            }
+          };
+        case 'cyberpunk':
+          return {
+            lecture: {
+              row: 'bg-[#ede9fe] border-l-[5px] border-[#9333ea]',
+              teacher: 'text-[#7e22ce]',
+              subject: 'text-[#581c87]',
+              diamond: 'text-[#9333ea]',
+              text: 'text-[#581c87] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#eab308]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#a5f3fc] border-l-[5px] border-[#06b6d4]',
+              badge: 'bg-[#22d3ee] text-[#155e75] border-[1.5px] border-[#0891b2]',
+              subjectPill: 'text-[#155e75]',
+              text: 'text-[#155e75] font-black'
+            },
+            exam: {
+              row: 'bg-[#fbcfe8] border-l-[5px] border-[#c026d3]',
+              badge: 'bg-[#c026d3] text-white border-[1.5px] border-[#a21caf]',
+              text: 'text-[#701a75] font-black'
+            }
+          };
+        case 'gold':
+          return {
+            lecture: {
+              row: 'bg-[#dbeafe] border-l-[5px] border-[#1d4ed8]',
+              teacher: 'text-[#1e3a8a]',
+              subject: 'text-[#0f172a]',
+              diamond: 'text-[#1d4ed8]',
+              text: 'text-[#0f172a] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#bbf7d0] border-l-[5px] border-[#15803d]',
+              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#15803d]',
+              subjectPill: 'text-[#14532d]',
+              text: 'text-[#14532d] font-black'
+            },
+            exam: {
+              row: 'bg-[#ffedd5] border-l-[5px] border-[#ea580c]',
+              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              text: 'text-[#7c2d12] font-black'
+            }
+          };
+        case 'slate':
+          return {
+            lecture: {
+              row: 'bg-[#e2e8f0] border-l-[5px] border-[#334155]',
+              teacher: 'text-[#0f172a]',
+              subject: 'text-[#0f172a]',
+              diamond: 'text-[#334155]',
+              text: 'text-[#0f172a] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#ca8a04]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#bbf7d0] border-l-[5px] border-[#16a34a]',
+              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#16a34a]',
+              subjectPill: 'text-[#14532d]',
+              text: 'text-[#14532d] font-black'
+            },
+            exam: {
+              row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
+              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              text: 'text-[#7c2d12] font-black'
+            }
+          };
+        case 'purple-cyan':
+        default:
+          return {
+            lecture: {
+              row: 'bg-[#e0f2fe] border-l-[5px] border-[#0284c7]',
+              teacher: 'text-[#0369a1]',
+              subject: 'text-[#0c4a6e]',
+              diamond: 'text-[#0284c7]',
+              text: 'text-[#0c4a6e] font-black'
+            },
+            recess: {
+              row: 'bg-[#fef08a] border-l-[5px] border-[#d97706]',
+              badge: 'bg-[#facc15] text-[#713f12] border-[1.5px] border-[#ca8a04]',
+              text: 'text-[#713f12] font-black'
+            },
+            study: {
+              row: 'bg-[#bbf7d0] border-l-[5px] border-[#16a34a]',
+              badge: 'bg-[#4ade80] text-[#14532d] border-[1.5px] border-[#16a34a]',
+              subjectPill: 'text-[#14532d]',
+              text: 'text-[#14532d] font-black'
+            },
+            exam: {
+              row: 'bg-[#fed7aa] border-l-[5px] border-[#ea580c]',
+              badge: 'bg-[#ea580c] text-white border-[1.5px] border-[#c2410c]',
+              text: 'text-[#7c2d12] font-black'
+            }
+          };
       }
-      const s = (subjectName || '').toLowerCase();
-      if (s.includes('math') || s.includes('calculus') || s.includes('algebra')) {
-        return {
-          teacherClass: 'lecture-math-teacher',
-          subjectClass: 'lecture-math-subject',
-          diamondColor: 'text-blue-600',
-          rowClass: 'hover:bg-blue-50/40'
-        };
-      } else if (s.includes('physic') || s.includes('mechanic')) {
-        return {
-          teacherClass: 'lecture-physics-teacher',
-          subjectClass: 'lecture-physics-subject',
-          diamondColor: 'text-emerald-600',
-          rowClass: 'hover:bg-emerald-50/40'
-        };
-      } else if (s.includes('chem') || s.includes('organic') || s.includes('inorganic')) {
-        return {
-          teacherClass: 'lecture-chem-teacher',
-          subjectClass: 'lecture-chem-subject',
-          diamondColor: 'text-purple-600',
-          rowClass: 'hover:bg-purple-50/40'
-        };
-      } else if (s.includes('bio') || s.includes('botany') || s.includes('zoology')) {
-        return {
-          teacherClass: 'lecture-bio-teacher',
-          subjectClass: 'lecture-bio-subject',
-          diamondColor: 'text-rose-600',
-          rowClass: 'hover:bg-rose-50/40'
-        };
-      }
-      return {
-        teacherClass: 'lecture-default-teacher',
-        subjectClass: 'lecture-default-subject',
-        diamondColor: 'text-sky-600',
-        rowClass: 'hover:bg-sky-50/40'
-      };
     }
 
     /* -------------------------------------------------------------
@@ -1231,16 +1430,17 @@
 
       const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
       const assigns = dailyData.assignments || {};
+      const themeColors = getThemeRowClasses();
 
       tbody.innerHTML = sortedSlots.map(slot => {
         const timeStr = formatSlotRange(slot.start, slot.end);
 
         if (slot.type === 'recess') {
           return `
-            <tr class="recess-row border-y border-amber-200">
-              <td class="py-2.5 px-2 font-bold text-amber-900 whitespace-nowrap">${timeStr}</td>
-              <td class="py-2.5 px-2"><span class="recess-badge">RECESS</span></td>
-              <td class="py-2.5 px-2 italic font-bold text-slate-700">${slot.label || 'Recess'}</td>
+            <tr class="${themeColors.recess.row} border-y">
+              <td class="py-2.5 px-2 font-bold ${themeColors.recess.text} whitespace-nowrap">${timeStr}</td>
+              <td class="py-2.5 px-2"><span class="${themeColors.recess.badge}">RECESS</span></td>
+              <td class="py-2.5 px-2 italic font-bold ${themeColors.recess.text} text-xs">${escapeHTML(slot.label || 'Recess')}</td>
               <td class="py-2.5 px-2 text-right">
                 <button onclick="deleteSlotFromActiveDate('${slot.id}')" class="text-rose-500 hover:text-rose-700 p-1">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i>
@@ -1252,12 +1452,12 @@
 
         if (slot.type === 'exam') {
           return `
-            <tr class="exam-row border-y border-rose-200 text-rose-950">
-              <td class="py-2.5 px-2 font-black text-rose-950 whitespace-nowrap">${timeStr}</td>
+            <tr class="${themeColors.exam.row} border-y ${themeColors.exam.text}">
+              <td class="py-2.5 px-2 font-black ${themeColors.exam.text} whitespace-nowrap">${timeStr}</td>
               <td class="py-2.5 px-2">
-                <span class="exam-badge">EXAM</span>
+                <span class="${themeColors.exam.badge}">EXAM</span>
               </td>
-              <td class="py-2.5 px-2 font-black text-rose-900 text-xs">
+              <td class="py-2.5 px-2 font-black ${themeColors.exam.text} text-xs">
                 ${escapeHTML(slot.label || 'Exam / Test Paper')}
               </td>
               <td class="py-2.5 px-2 text-right">
@@ -1271,14 +1471,12 @@
 
         if (slot.type === 'study') {
           return `
-            <tr class="bg-purple-50/70 border-y border-purple-200 text-purple-950">
-              <td class="py-2.5 px-2 font-black text-slate-900 whitespace-nowrap">${timeStr}</td>
+            <tr class="${themeColors.study.row} border-y">
+              <td class="py-2.5 px-2 font-black ${themeColors.study.text || 'text-slate-900'} whitespace-nowrap">${timeStr}</td>
               <td class="py-2.5 px-2">
-                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-purple-200 text-purple-900 border border-purple-300">
-                  STUDY
-                </span>
+                <span class="${themeColors.study.badge}">STUDY</span>
               </td>
-              <td class="py-2.5 px-2 font-bold text-purple-900 text-xs">
+              <td class="py-2.5 px-2 font-bold ${themeColors.study.text || 'text-slate-900'} text-xs">
                 ${escapeHTML(slot.label || 'Self-Study & DPP Practice')}
               </td>
               <td class="py-2.5 px-2 text-right">
@@ -1318,15 +1516,15 @@
         }
 
         return `
-          <tr class="hover:bg-slate-50 transition ${!conflict.available ? 'bg-rose-50/70' : ''}">
-            <td class="py-2.5 px-2 font-black text-slate-900 whitespace-nowrap">${timeStr}</td>
+          <tr class="${themeColors.lecture.row} border-y transition ${!conflict.available ? '!bg-rose-50/70 !border-rose-400' : ''}">
+            <td class="py-2.5 px-2 font-black ${themeColors.lecture.text} whitespace-nowrap">${timeStr}</td>
             <td class="py-2.5 px-2">
-              <select onchange="updateClassSlotTeacher('${slot.id}', this.value)" class="w-full text-[11px] font-bold p-1 rounded-lg border ${!conflict.available ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-slate-50'} outline-none">
+              <select onchange="updateClassSlotTeacher('${slot.id}', this.value)" class="w-full text-[11px] font-bold p-1 rounded-lg border ${!conflict.available ? 'border-rose-400 bg-rose-50' : 'border-slate-200 bg-white'} outline-none">
                 ${teacherOpts.join('')}
               </select>
             </td>
             <td class="py-2.5 px-2">
-              <select onchange="updateClassSlotSubject('${slot.id}', this.value)" ${!selTeacherId ? 'disabled' : ''} class="w-full text-[11px] font-semibold p-1 rounded-lg border border-slate-200 bg-slate-50 outline-none disabled:opacity-40">
+              <select onchange="updateClassSlotSubject('${slot.id}', this.value)" ${!selTeacherId ? 'disabled' : ''} class="w-full text-[11px] font-semibold p-1 rounded-lg border border-slate-200 bg-white outline-none disabled:opacity-40">
                 ${subjectOpts}
               </select>
             </td>
@@ -1346,6 +1544,16 @@
        EXACT VIEW FORMAT MATCH (View Tab & Fullscreen Screenshot)
        ------------------------------------------------------------- */
     function renderExactView() {
+      // Ensure active selectors match active state
+      const viewSelect = document.getElementById('viewClassSelect');
+      const viewDate = document.getElementById('viewDateInput');
+      if (viewSelect && viewSelect.value !== activeClassId) {
+        viewSelect.value = activeClassId;
+      }
+      if (viewDate && viewDate.value !== activeDate) {
+        viewDate.value = activeDate;
+      }
+
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Selected Batch';
       const prettyDate = getPrettyDate(activeDate);
@@ -1357,11 +1565,11 @@
 
       if (badge) {
         badge.innerText = `BATCH: ${className.toUpperCase()}`;
-        badge.className = "inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
+        badge.className = "inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm md:text-base font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
       }
       if (subtext) {
         subtext.innerText = `Schedule Date: ${prettyDate}`;
-        subtext.className = "text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1";
+        subtext.className = "text-xs sm:text-sm font-extrabold text-slate-800";
       }
 
       // Fullscreen View Elements
@@ -1371,71 +1579,68 @@
 
       if (fsBadge) {
         fsBadge.innerText = `BATCH: ${className.toUpperCase()}`;
-        fsBadge.className = "inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base md:text-lg font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
+        fsBadge.className = "inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm md:text-base font-black text-blue-800 bg-blue-50 border-2 border-blue-300 uppercase shadow-sm";
       }
       if (fsDate) {
         fsDate.innerText = `Schedule Date: ${prettyDate}`;
-        fsDate.className = "text-xs sm:text-sm md:text-base font-extrabold text-slate-800 mt-1";
+        fsDate.className = "text-xs sm:text-sm font-extrabold text-slate-800";
       }
 
       const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
       const slots = dailyData.slots || [];
       const sortedSlots = [...slots].sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
       const assigns = dailyData.assignments || {};
+      const themeColors = getThemeRowClasses();
 
       const html = sortedSlots.map(slot => {
         const timeStr = formatSlotRange(slot.start, slot.end);
 
-        // RECESS ROW
+        // 1. RECESS ROW (Harmonized with table theme)
         if (slot.type === 'recess') {
           return `
-            <tr class="recess-row border-y border-amber-200">
-              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-amber-950 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+            <tr class="${themeColors.recess.row} border-b">
+              <td class="py-2.5 sm:py-3 px-2 sm:px-3 font-extrabold ${themeColors.recess.text} whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
                 ${timeStr}
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
-                <span class="recess-badge">RECESS</span>
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
+                <span class="${themeColors.recess.badge}">RECESS</span>
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 font-bold italic text-slate-700 text-[10px] sm:text-xs md:text-sm truncate">
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 font-bold italic ${themeColors.recess.text} text-[10px] sm:text-xs md:text-sm truncate">
                 ${escapeHTML(slot.label || 'Recess')}
               </td>
             </tr>
           `;
         }
 
-        // EXAM ROW
+        // 2. EXAM ROW (Harmonized with table theme)
         if (slot.type === 'exam') {
           return `
-            <tr class="exam-row border-y border-rose-200 text-rose-950">
-              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-black text-rose-950 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+            <tr class="${themeColors.exam.row} border-b ${themeColors.exam.text}">
+              <td class="py-2.5 sm:py-3 px-2 sm:px-3 font-black ${themeColors.exam.text} whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
                 ${timeStr}
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
-                <span class="exam-badge">EXAM</span>
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
+                <span class="${themeColors.exam.badge}">EXAM</span>
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 font-black text-rose-900 text-[10px] sm:text-xs md:text-sm break-words">
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 font-black ${themeColors.exam.text} text-[10px] sm:text-xs md:text-sm break-words">
                 ${escapeHTML(slot.label || 'Exam Paper')}
               </td>
             </tr>
           `;
         }
 
-        // STUDY SESSION ROW
+        // 3. STUDY SESSION ROW (Harmonized with table theme)
         if (slot.type === 'study') {
-          const theme = getSubjectColorTheme('', true);
           return `
-            <tr class="border-b border-purple-100 ${theme.rowClass}">
-              <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-slate-900 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+            <tr class="${themeColors.study.row} border-b">
+              <td class="py-2.5 sm:py-3 px-2 sm:px-3 font-extrabold ${themeColors.study.text || 'text-slate-900'} whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
                 ${timeStr}
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
-                <div class="teacher-pill ${theme.teacherClass}">
-                  <span class="${theme.diamondColor} text-[8px] sm:text-[10px]">&#9670;</span>
-                  <span class="truncate">Self-Study</span>
-                </div>
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
+                <span class="${themeColors.study.badge}">STUDY</span>
               </td>
-              <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3">
-                <div class="subject-pill ${theme.subjectClass}">
+              <td class="py-2.5 sm:py-3 px-1.5 sm:px-3">
+                <div class="subject-pill ${themeColors.study.subjectPill}">
                   ${escapeHTML(slot.label || 'DPP & Problem Solving')}
                 </div>
               </td>
@@ -1443,30 +1648,29 @@
           `;
         }
 
-        // LECTURE ROW
+        // 4. LECTURE ROW (Harmonized with table theme)
         const assign = assigns[slot.id] || {};
         const teacherName = db.teachers.find(item => item.id === assign.teacherId)?.name;
         const subjectName = assign.subject;
-        const theme = getSubjectColorTheme(subjectName, false);
 
         return `
-          <tr class="border-b border-slate-100 ${theme.rowClass}">
-            <td class="py-2.5 sm:py-3.5 px-2 sm:px-3 font-extrabold text-slate-900 whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
+          <tr class="${themeColors.lecture.row} border-b">
+            <td class="py-2.5 sm:py-3 px-2 sm:px-3 font-extrabold ${themeColors.lecture.text} whitespace-nowrap text-[10px] sm:text-xs md:text-sm">
               ${timeStr}
             </td>
-            <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 min-w-0">
+            <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 min-w-0">
               ${teacherName ? `
-                <div class="teacher-pill ${theme.teacherClass}">
-                  <span class="${theme.diamondColor} text-[8px] sm:text-[10px] flex-shrink-0">&#9670;</span>
+                <div class="teacher-pill ${themeColors.lecture.teacher}">
+                  <span class="${themeColors.lecture.diamond} text-[8px] sm:text-[10px] flex-shrink-0">&#9670;</span>
                   <span class="truncate">${escapeHTML(teacherName)}</span>
                 </div>
               ` : `
                 <div class="empty-pill">&mdash;</div>
               `}
             </td>
-            <td class="py-2.5 sm:py-3.5 px-1.5 sm:px-3 min-w-0">
+            <td class="py-2.5 sm:py-3 px-1.5 sm:px-3 min-w-0">
               ${subjectName ? `
-                <div class="subject-pill ${theme.subjectClass}">
+                <div class="subject-pill ${themeColors.lecture.subject}">
                   ${escapeHTML(subjectName)}
                 </div>
               ` : `
@@ -1481,6 +1685,51 @@
       if (fsTbody) fsTbody.innerHTML = html;
 
       safeCreateIcons();
+    }
+
+    /* -------------------------------------------------------------
+       SLOT MUTATIONS (TEACHER, SUBJECT, DELETE & CLEAR)
+       ------------------------------------------------------------- */
+    function updateClassSlotTeacher(slotId, newTeacherId) {
+      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
+
+      dailyData.assignments[slotId].teacherId = newTeacherId;
+      const subs = getTeacherAssignedSubjects(newTeacherId);
+      dailyData.assignments[slotId].subject = subs.length > 0 ? subs[0] : '';
+
+      saveDatabase();
+      renderEditTimetable();
+      renderExactView();
+    }
+
+    function updateClassSlotSubject(slotId, newSubject) {
+      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+      if (!dailyData.assignments[slotId]) dailyData.assignments[slotId] = {};
+
+      dailyData.assignments[slotId].subject = newSubject;
+      saveDatabase();
+      renderEditTimetable();
+      renderExactView();
+    }
+
+    function clearAllRowsForCurrentDay() {
+      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+      dailyData.assignments = {};
+      saveDatabase();
+      renderEditTimetable();
+      renderExactView();
+      showToast('Emptied all rows for this date', 'info');
+    }
+
+    function deleteSlotFromActiveDate(slotId) {
+      const dailyData = getOrCreateDailySchedule(activeDate, activeClassId);
+      dailyData.slots = (dailyData.slots || []).filter(s => s.id !== slotId);
+      if (dailyData.assignments) delete dailyData.assignments[slotId];
+      saveDatabase();
+      renderEditTimetable();
+      renderExactView();
+      showToast('Slot removed', 'info');
     }
 
     function handleCreateNewSlot(e) {
@@ -1673,6 +1922,8 @@
        FULLSCREEN CLEAN SCREENSHOT MODE
        ------------------------------------------------------------- */
     function openFullscreenTimetable() {
+      // Guarantee both views are freshly synced with database before opening
+      renderEditTimetable();
       renderExactView();
       openModal('modalFullscreenTimetable');
       showToast('Clean view loaded for mobile screenshot!', 'info');
@@ -1710,19 +1961,11 @@
     }
 
     function onEditClassChange(val) {
-      activeClassId = val;
-      const viewSelect = document.getElementById('viewClassSelect');
-      if (viewSelect) viewSelect.value = val;
-      renderEditTimetable();
-      renderExactView();
+      syncBatch(val);
     }
 
     function onViewClassChange(val) {
-      activeClassId = val;
-      const editSelect = document.getElementById('editClassSelect');
-      if (editSelect) editSelect.value = val;
-      renderEditTimetable();
-      renderExactView();
+      syncBatch(val);
     }
 
     function onDateChange(val) {
@@ -1895,8 +2138,9 @@
         }
       });
 
-      if (tabId === 'edit-timetable') renderEditTimetable();
-      if (tabId === 'view-export') renderExactView();
+      // Always re-sync & re-render on tab switch so changes reflect immediately
+      renderEditTimetable();
+      renderExactView();
       if (tabId === 'settings') renderSettingsTab();
 
       safeCreateIcons();
@@ -1993,10 +2237,13 @@
       document.body.setAttribute('data-app-theme', themeName);
       
       const settingsAppSelect = document.getElementById('settingsAppThemeSelect');
+      const quickAppSelect = document.getElementById('quickAppThemeSelect');
       if (settingsAppSelect) settingsAppSelect.value = themeName;
+      if (quickAppSelect) quickAppSelect.value = themeName;
 
       db.appTheme = themeName;
       saveDatabase();
+      // Notice: Table theme is intentionally NOT modified or re-evaluated here
       showToast(`App theme set to ${themeName.toUpperCase()}`, 'info');
     }
 
@@ -2026,7 +2273,46 @@
 
       db.tableTheme = themeName;
       saveDatabase();
+
+      // Only re-renders the timetable rows and headers
+      renderEditTimetable();
+      renderExactView();
+
       showToast(`Table theme updated!`, 'success');
+    }
+
+    function changeTableTheme(themeName) {
+      currentTableTheme = themeName;
+      const themeClass = `table-theme-${themeName}`;
+
+      const headerIds = ['mainTableHeaderRow', 'viewTableHeaderRow', 'fsTableHeaderRow'];
+      const themeClasses = [
+        'table-theme-purple-cyan', 'table-theme-aurora', 'table-theme-sunset',
+        'table-theme-crimson', 'table-theme-emerald', 'table-theme-cyberpunk',
+        'table-theme-gold', 'table-theme-slate'
+      ];
+
+      headerIds.forEach(id => {
+        const row = document.getElementById(id);
+        if (row) {
+          themeClasses.forEach(cls => row.classList.remove(cls));
+          row.classList.add(themeClass);
+        }
+      });
+
+      const editSelect = document.getElementById('editTableThemeSelect');
+      const settingsTableSelect = document.getElementById('settingsTableThemeSelect');
+      if (editSelect) editSelect.value = themeName;
+      if (settingsTableSelect) settingsTableSelect.value = themeName;
+
+      db.tableTheme = themeName;
+      saveDatabase();
+
+      // Immediately re-render both the editor and the preview/fullscreen tables so the row background colors update instantly
+      renderEditTimetable();
+      renderExactView();
+
+      showToast(`Table theme & row palette updated!`, 'success');
     }
   </script>
 </body>
